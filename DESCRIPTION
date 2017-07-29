@@ -1,0 +1,21 @@
+Package: boxcoxmix
+Type: Package
+Title: Response Transformations for Random Effect and Variance
+        Component Models
+Version: 0.13
+Date: 2017-7-29
+Author: Amani Almohaimeed and Jochen Einbeck
+Maintainer: Amani Almohaimeed <amani.almohaimeed@gmail.com>
+Depends: R (>= 3.3.2)
+Imports: statmod(>= 1.4.20), qicharts(>= 0.5.4)
+Suggests: npmlreg, nlme
+LazyLoad: yes
+Description: Response transformations for overdispersed generalized linear
+    models and variance component models using nonparametric profile maximum
+    likelihood estimation. The main function is optim.boxcox().
+License: GPL (>= 3)
+RoxygenNote: 6.0.1
+NeedsCompilation: no
+Packaged: 2017-07-29 16:10:40 UTC; amanialmohaimeed
+Repository: CRAN
+Date/Publication: 2017-07-29 17:44:02 UTC

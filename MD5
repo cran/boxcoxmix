@@ -1,0 +1,14 @@
+2d4d482b6c7285f3f9b61ba524bcd467 *DESCRIPTION
+14d871a859175f6fe30dc73d504ca080 *NAMESPACE
+09437bc7cd60db6a8fb9ce5b6941751b *R/BoxCoxmix.R
+ef67fcd5a802c7090dcceee4a479fceb *R/boxcoxmix-package.R
+449331a8e31d1b9b92f4e97f69b78646 *R/optim.boxcox.R
+6ce80a4d7dfc7d59dfb367e31c1d98ac *R/summary.boxcoxmix.R
+a4635435c2fd0afe1eea73aa46587792 *R/tolfind.boxcox.R
+779b6153a3b67782b4a4709d8e2ed2fc *man/boxcoxmix-package.Rd
+2bb8e7957db8fffb1dc20f3246a05c4f *man/np.boxcoxmix.Rd
+134e99a58f035fee11bf33f42a6e7452 *man/optim.boxcox.Rd
+33a795acc8c519655db6c4de216c6e7d *man/plot.Rd
+702a5b7010db319c86d6e7feaa06c5f5 *man/summary.Rd
+9227d630f0a5ffabd48a1b585cd92235 *man/tolfind.boxcox.Rd
+6a99b833bfa0fea3853a9d3d0518bee9 *man/vc.em.Rd
