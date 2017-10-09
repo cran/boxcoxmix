@@ -12,7 +12,7 @@ estimation. The main function is \code{optim.boxcox()}.
 }
 \details{
 \tabular{ll}{ Package: \tab boxcoxmix\cr Type: \tab Package\cr Version: \tab
-0.13\cr Date: \tab 2017-7-29\cr License: \tab GPL (>=3)\cr }
+0.14\cr Date: \tab 2017-10-9\cr License: \tab GPL (>=3)\cr }
 }
 \references{
 Box G. and Cox D. (1964). An analysis of transformations. Journal of

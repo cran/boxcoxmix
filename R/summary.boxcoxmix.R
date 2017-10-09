@@ -51,7 +51,7 @@ print.boxcoxmix <- function(x,digits=max(3,getOption('digits')-3),na.print='', .
     print.default(format(x$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (x$kind=='3'){
-  cat("Maximaum complete Log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
+  cat("Maximum profile Log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
     np <- length(x$beta)
     m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
     mass.points <- x$beta[m]
@@ -114,7 +114,7 @@ print.boxcoxmixpure <- function(x,digits=max(3,getOption('digits')-3),na.print='
     print.default(format(x$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (x$kind=='3'){
-    cat("Maximaum complete Log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
+    cat("Maximum profile Log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
     np <- length(x$beta)
     m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
     mass.points <- x$beta[m]
@@ -190,7 +190,7 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
     print.default(format(object$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (object$kind=='3'){
-    cat("Maximaum complete Log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
+    cat("Maximum profile Log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
     np <- length(object$beta)
     m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
     mass.points <- object$beta[m]
@@ -259,7 +259,7 @@ summary.boxcoxmixpure <- function(object,digits=max(3,getOption('digits')-3), ..
     print.default(format(object$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (object$kind=='3'){
-    cat("Maximaum complete Log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
+    cat("Maximum profile Log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
     np <- length(object$beta)
     m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
     mass.points <- object$beta[m]
