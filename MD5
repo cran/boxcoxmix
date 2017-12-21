@@ -1,7 +1,7 @@
-ad51591611a1d574415d20f7be598610 *DESCRIPTION
+fe7ad0e8154b14a0c6891bcd52e0c603 *DESCRIPTION
 14d871a859175f6fe30dc73d504ca080 *NAMESPACE
 09437bc7cd60db6a8fb9ce5b6941751b *R/BoxCoxmix.R
-1e5c37358d6d38e710811201449f18cb *R/boxcoxmix-package.R
+7952435200af0e7d9fcdb622b563bb8b *R/boxcoxmix-package.R
 449331a8e31d1b9b92f4e97f69b78646 *R/optim.boxcox.R
 57457e816efbd0fba29995acee77120d *R/summary.boxcoxmix.R
 a4635435c2fd0afe1eea73aa46587792 *R/tolfind.boxcox.R
@@ -9,7 +9,7 @@ fdb95e3c41ef83791515481e430755c9 *build/vignette.rds
 9fce203d67dce3a99f622597be40ddbb *inst/doc/boxcoxmix.R
 109d0d95616386b5e3ce834d5271c28f *inst/doc/boxcoxmix.Rnw
 3c028f3f31290b6df895bd3d027f8d63 *inst/doc/boxcoxmix.pdf
-4a9f583029bb717c4269f0532bb9b634 *man/boxcoxmix-package.Rd
+f53a4af6eaf972031f0dae15eb2344f6 *man/boxcoxmix-package.Rd
 2bb8e7957db8fffb1dc20f3246a05c4f *man/np.boxcoxmix.Rd
 134e99a58f035fee11bf33f42a6e7452 *man/optim.boxcox.Rd
 33a795acc8c519655db6c4de216c6e7d *man/plot.Rd
@@ -17,7 +17,6 @@ fdb95e3c41ef83791515481e430755c9 *build/vignette.rds
 9227d630f0a5ffabd48a1b585cd92235 *man/tolfind.boxcox.Rd
 6a99b833bfa0fea3853a9d3d0518bee9 *man/vc.em.Rd
 f3fe936ff59578e8d7349bac9f452409 *vignettes/boxcoxmix-2.pdf
-d8d7b4bacd79af110d7a26e25c788232 *vignettes/boxcoxmix-knitr.Rnw
 109d0d95616386b5e3ce834d5271c28f *vignettes/boxcoxmix.Rnw
 697c1fd978a3ebb9741212f5ce018d09 *vignettes/boxcoxmix.bib
 21623d734ff251436b2b7f57dda6d425 *vignettes/maxnp.png
