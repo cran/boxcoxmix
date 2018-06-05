@@ -1,22 +1,23 @@
 Package: boxcoxmix
 Type: Package
-Title: Response Transformations for Random Effect and Variance
-        Component Models
-Version: 0.15
-Date: 2017-12-21
+Title: Box-Cox-Type Transformations for Linear and Logistic Models with
+        Random Effects
+Version: 0.20
+Date: 2018-6-5
 Author: Amani Almohaimeed and Jochen Einbeck
 Maintainer: Amani Almohaimeed <amani.almohaimeed@gmail.com>
-Depends: R (>= 3.3.2)
-Imports: statmod(>= 1.4.20), qicharts(>= 0.5.4)
-Suggests: npmlreg, nlme, mdscore, utils
+Depends: R (>= 3.3.0)
+Imports: statmod(>= 1.4.27), qicharts(>= 0.5.4), npmlreg(>= 0.46-1)
+Suggests: nlme, mdscore, flexmix, utils
 LazyLoad: yes
-Description: Response transformations for overdispersed generalized linear
-    models and variance component models using nonparametric profile maximum
-    likelihood estimation. The main function is optim.boxcox().
+Description: Box-Cox-type transformations for linear and logistic models
+             with random effects using non-parametric profile maximum
+             likelihood estimation. The main functions are optim.boxcox()
+             and boxcoxtype().
 License: GPL (>= 3)
 RoxygenNote: 6.0.1
 VignetteBuilder: utils
 NeedsCompilation: no
-Packaged: 2017-12-21 14:23:32 UTC; amanialmohaimeed
+Packaged: 2018-06-05 17:40:46 UTC; amanialmohaimeed
 Repository: CRAN
-Date/Publication: 2017-12-21 19:00:20 UTC
+Date/Publication: 2018-06-05 18:35:31 UTC

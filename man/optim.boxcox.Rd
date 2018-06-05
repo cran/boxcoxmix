@@ -53,8 +53,8 @@ log-likelihood corresponding to Maximum.}
 \item{mass.point}{the fitted mass points.} \item{p}{the masses corresponding to the mixing proportions.} \item{beta}{the
 vector of coefficients.} \item{sigma}{the standard deviation of the mixing distribution (the square root of the variance).} \item{se}{the standard error of the estimate.}
 \item{w}{a matrix of posterior probabilities that element i comes from cluster k.}
-\item{loglik}{the log-likelihood of the fitted regression model.}
-\item{profile.loglik}{the profile log-likelihood of the fitted regression model.}
+\item{loglik}{the profile log-likelihood of the fitted regression model.}
+\item{profile.loglik}{the profile complete log-likelihood of the fitted regression model.}
 \item{disparity}{the disparity of the fitted regression model.} 
 \item{call}{the matched call.} \item{formula}{the formula provided.}
 \item{data}{the data argument.} \item{aic}{the Akaike information criterion of the fitted regression model.}
@@ -103,21 +103,20 @@ concerning \code{lambda}, including a vertical line indicating the best value of
 that maximizes the non-parametric profile log-likelihood.
 }
 \examples{
-# The Pennsylvanian Hospital Stay Data
-data(hosp, package = "npmlreg")
-test1 <- optim.boxcox(duration ~ age , data = hosp, K =2, tol = 0, 
-                      start = "quantile", steps = 800, 
-                      find.in.range = c(-2, 2), s = 15, plot.opt = 0)
-# Maximum profile Log-likelihood: -86.15186 at lambda= -0.1333333  
+# The strength Data
+data(strength, package = "mdscore")
+maxlam <- optim.boxcox(y ~ cut*lot, data = strength, K = 3,  
+           start = "gq" ,  find.in.range = c(-2, 2), s = 5)
+# Maximum profile log-likelihood: 33.6795 at lambda= -0.4  
 
-# Effect of Phenylbiguanide on Blood Pressure
-data(PBG, package = "nlme")
-test3<- optim.boxcox(deltaBP ~ dose , groups = PBG$Rabbit, 
-                         data = PBG, K = 2, tol = 0, start = "gq", 
-                         find.in.range = c(-1,2), s = 12, plot.opt = 0)
-# Maximum profile Log-likelihood: -174.6545 at lambda= 0.25  
-
-
+\donttest{data(Oxboys, package = "nlme")
+Oxboys$boy <- gl(26,9)
+maxlamvc <- optim.boxcox(height ~  age, groups = Oxboys$boy,
+                         data = Oxboys,   K = 2,  start = "gq",
+                         find.in.range=c(-1.2,1), s=6, plot.opt = 0) 
+maxlamvc$Maximum
+#[1] -0.8333333
+plot(maxlamvc,8)}
 
 
 

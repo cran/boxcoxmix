@@ -1,13 +1,13 @@
 
 
-#' Response Transformations for Random Effect and Variance Component Models
+#' Box-Cox-Type Transformations for Linear and Logistic Models with Random Effects
 #' 
-#' Response transformations for overdispersed generalized linear models and
-#' variance component models using nonparametric profile maximum likelihood
-#' estimation. The main function is \code{optim.boxcox()}.
+#' Box-Cox-type transformations for linear and logistic models with
+#' random effects using non-parametric profile maximum likelihood
+#' estimation. The main functions are \code{optim.boxcox()} and \code{boxcoxtype()}.
 #' 
 #' \tabular{ll}{ Package: \tab boxcoxmix\cr Type: \tab Package\cr Version: \tab
-#' 0.15\cr Date: \tab 2017-12-21\cr License: \tab GPL (>=3)\cr } 
+#' 0.20\cr Date: \tab 2018-6-5\cr License: \tab GPL (>=3)\cr } 
 #' 
 #' @name boxcoxmix-package
 #' @aliases boxcoxmix boxcoxmix-package
@@ -24,6 +24,11 @@
 #' Jochen Einbeck, Ross Darnell and John Hinde (2014). npmlreg:
 #' Nonparametric maximum likelihood estimation for random effect
 #' models. R package version 0.46-1.
+#' 
+#' R Core Team (2016). R: A language and environment for
+#' statistical computing. R Foundation for Statistical Computing,
+#' Vienna, Austria. URL https://www.R-project.org/.
+#' 
 #' 
 #' Maintainer: Amani Almohaimeed <amani.almohaimeed@@gmail.com>
 #' @keywords package

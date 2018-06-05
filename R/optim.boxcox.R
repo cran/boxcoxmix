@@ -107,8 +107,8 @@
 #' \item{mass.point}{the fitted mass points.} \item{p}{the masses corresponding to the mixing proportions.} \item{beta}{the
 #' vector of coefficients.} \item{sigma}{the standard deviation of the mixing distribution (the square root of the variance).} \item{se}{the standard error of the estimate.}
 #' \item{w}{a matrix of posterior probabilities that element i comes from cluster k.}
-#' \item{loglik}{the log-likelihood of the fitted regression model.}
-#' \item{profile.loglik}{the profile log-likelihood of the fitted regression model.}
+#' \item{loglik}{the profile log-likelihood of the fitted regression model.}
+#' \item{profile.loglik}{the profile complete log-likelihood of the fitted regression model.}
 #' \item{disparity}{the disparity of the fitted regression model.} 
 #' \item{call}{the matched call.} \item{formula}{the formula provided.}
 #' \item{data}{the data argument.} \item{aic}{the Akaike information criterion of the fitted regression model.}
@@ -135,34 +135,30 @@
 #' 
 #' @keywords optim boxcox 
 #' @examples
-#' # The Pennsylvanian Hospital Stay Data
-#' data(hosp, package = "npmlreg")
-#' test1 <- optim.boxcox(duration ~ age , data = hosp, K =2, tol = 0, 
-#'                       start = "quantile", steps = 800, 
-#'                       find.in.range = c(-2, 2), s = 15, plot.opt = 0)
-#' # Maximum profile Log-likelihood: -86.15186 at lambda= -0.1333333  
+#' # The strength Data
+#' data(strength, package = "mdscore")
+#' maxlam <- optim.boxcox(y ~ cut*lot, data = strength, K = 3,  
+#'            start = "gq" ,  find.in.range = c(-2, 2), s = 5)
+#' # Maximum profile log-likelihood: 33.6795 at lambda= -0.4  
 #' 
-#' # Effect of Phenylbiguanide on Blood Pressure
-#' data(PBG, package = "nlme")
-#' test3<- optim.boxcox(deltaBP ~ dose , groups = PBG$Rabbit, 
-#'                          data = PBG, K = 2, tol = 0, start = "gq", 
-#'                          find.in.range = c(-1,2), s = 12, plot.opt = 0)
-#' # Maximum profile Log-likelihood: -174.6545 at lambda= 0.25  
-#' 
-#' 
-#' 
+#' \donttest{data(Oxboys, package = "nlme")
+#' Oxboys$boy <- gl(26,9)
+#' maxlamvc <- optim.boxcox(height ~  age, groups = Oxboys$boy,
+#'                          data = Oxboys,   K = 2,  start = "gq",
+#'                          find.in.range=c(-1.2,1), s=6, plot.opt = 0) 
+#' maxlamvc$Maximum
+#' #[1] -0.8333333
+#' plot(maxlamvc,8)}
 #' 
 #' 
 #' 
 #' 
-#' @export optim.boxcox
+#' 
+#' @export 
 optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start="gq", EMdev.change = 1e-04, find.in.range = c(-3, 3), s=60, plot.opt = 3, verbose = FALSE, noformat = FALSE, ...){
   call <- match.call()
   mform <- strsplit(as.character(groups), "\\|")
   mform <- gsub(" ", "", mform)
-  if (K == 1) {
-    stop("Please choose K > 1.")
-  }
   if (!noformat) {
     if (steps > 8) 
       graphics::par(mfrow = c(4, 4), cex = 0.5)
@@ -180,7 +176,7 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
         return()
       }
       EMconverged[t] <- fit$EMconverged
-      result[t] <- fit$profile.loglik
+      result[t] <- fit$loglik
     if (!all(is.finite(result[t]))) {print.plot <- FALSE}
   }
     s.max<- which.max(result)
@@ -198,6 +194,7 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
       Beta <- fit$beta
       Sigma<- fit$sigma
       aic<- fit$aic
+      bic<- fit$bic
       y <- fit$y
       yt <- fit$yt
       fitted <- fit$fitted
@@ -212,32 +209,32 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
       Disp <- fit$disparity
       Disparities <- fit$Disparities
       Loglik <- fit$loglik
-  npcolors <- 2 + EMconverged
+  npcolors <- "green"
   ylim1 = range(result, max.result)
+  maxl <- paste("Maximum profile log-likelihood:",round(max.result,digits=3) , "at lambda=", round(lambda.max,digits=2), "\n")
   if (plot.opt==3){
     graphics::plot(lambda, result, type = "l", xlab = expression(lambda), 
-                   ylab = "profile Log-liklihood", ylim = ylim1, col= npcolors)
+                   ylab = "Profile log-likelihood", ylim = ylim1, col= "green")
     plims <- graphics::par("usr")
-    y0 <- plims[3]
-      graphics::segments(lambda.max, y0, lambda.max, max.result, lty = 3)
-    cat("Maximum profile Log-likelihood:", max.result, "at lambda=", lambda.max, "\n")
+    y0 <- plims[3] 
+    graphics::segments(lambda.max, y0, lambda.max, max.result, lty = 1, col = "red", lwd = 2)
+    cat("Maximum profile log-likelihood:", max.result, "at lambda=", lambda.max, "\n")
     result<- list("call"=call, "y0"=y0, "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
-                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "masses"=masses, "y"=y, "yt"=yt,
-                  "All.lambda" = lambda, "profile.loglik" = result, "ylim1"=ylim1,
-                  "disparity"= Disp, "EMconverged" = EMconverged, "Maximum" = lambda.max, "mform"=length(mform),"ylim"=ylim, 
-                  "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
-                  "residuals"=residuals, "residuals.transformed"=residuals.transformed, "objective"= max.result,"kind"=3,
-                  "EMiteration"= iter, "ss"=s,"s.max"=s.max, "npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx)
-    class(result)<-"boxcoxmix"
-  } else{
-    cat("Maximum profile Log-likelihood:", max.result, "at lambda=", lambda.max, "\n")
-    result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
-                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "masses"=masses, "y"=y, "yt"=yt,
+                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic,"bic"=bic, "masses"=masses, "y"=y, "yt"=yt,
                   "All.lambda" = lambda, "profile.loglik" = result, 
                   "disparity"= Disp, "EMconverged" = EMconverged, "Maximum" = lambda.max, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed, "objective"= max.result,"kind"=3,
-                  "EMiteration"= iter, "ss"=s,"s.max"=s.max, "xx" = xx)
+                  "EMiteration"= iter, "ss"=s,"s.max"=s.max, "npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx,"maxl"=maxl )
+    class(result)<-"boxcoxmix"
+  } else{  
+    result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
+                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "bic"=bic, "masses"=masses, "y"=y, "yt"=yt,
+                  "All.lambda" = lambda, "profile.loglik" = result, 
+                  "disparity"= Disp, "EMconverged" = EMconverged, "Maximum" = lambda.max, "mform"=length(mform),"ylim"=ylim, 
+                  "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
+                  "residuals"=residuals, "residuals.transformed"=residuals.transformed, "objective"= max.result,"kind"=3,
+                  "EMiteration"= iter, "ss"=s,"s.max"=s.max,"npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx,"maxl"=maxl)
     class(result)<-"boxcoxmix"
   }
   return(result)

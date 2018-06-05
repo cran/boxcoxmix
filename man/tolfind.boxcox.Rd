@@ -5,8 +5,8 @@
 \title{Grid search over tol for NPPML estimation of random effect and variance component models}
 \usage{
 tolfind.boxcox(formula, groups = 1, data, K = 3, lambda = 1,
-  EMdev.change = 1e-04, plot.opt = 2, s = 20, steps = 500,
-  find.in.range = c(0, 2), start = "gq", verbose = FALSE,
+  EMdev.change = 1e-04, plot.opt = 2, s = 15, steps = 500,
+  find.in.range = c(0, 1.5), start = "gq", verbose = FALSE,
   noformat = FALSE, ...)
 }
 \arguments{
@@ -26,14 +26,14 @@ transformation'.}
 \item{EMdev.change}{a small scalar, with default 0.0001, used to determine
 when to stop EM algorithm.}
 
-\item{plot.opt}{Set \code{plot.opt=2}, to plot the disparity against
-iteration number.}
+\item{plot.opt}{Set \code{plot.opt=2}, to plot the EM trajectories and the development of the disparity over
+iteration number.  And \code{plot.opt=0}, for none of them.}
 
 \item{s}{number of points in the grid search of \code{tol}.}
 
 \item{steps}{maximum number of iterations for the EM algorithm.}
 
-\item{find.in.range}{search in a range of \code{tol}, with default (0,2) in
+\item{find.in.range}{search in a range of \code{tol}, with default (0,1.5) in
 step of 0.1 .}
 
 \item{start}{a description of the initial values to be used in the fitted
@@ -52,6 +52,8 @@ value of \code{tol} corresponding to \code{MinDisparity}.}
 \item{AllDisparities }{a vector containing all disparities calculated on the
 grid.} \item{Alltol }{list of \code{tol} values used in the grid.}
 \item{AllEMconverged }{1 is TRUE, means the EM algorithm converged.}
+\item{aic}{the Akaike information criterion of the fitted regression model.}
+\item{bic}{the Bayesian information criterion of the fitted regression model.}
 }
 \description{
 A grid search over the parameter \code{tol}, to set the initial values of
@@ -66,17 +68,18 @@ optimal solution.
 # The Pennsylvanian Hospital Stay Data
 data(hosp, package = "npmlreg")
 test1 <- tolfind.boxcox(duration ~ age , data = hosp, K = 2, lambda = 0, 
-    s = 10, steps = 600, start = "quantile", plot.opt = 0)
-# Minimal Disparity: 137.8364 at tol= 1.4  
-# Minimal Disparity with EM converged: 137.8364 at tol= 1.4 
+           find.in.range = c(0, 2), s = 10,  start = "gq")
+# Minimal Disparity: 137.8368 at tol= 2 
+# Minimal Disparity with EM converged: 137.8368 at tol= 2
 
 # Effect of Phenylbiguanide on Blood Pressure
 data(PBG, package = "nlme")
-test3 <- tolfind.boxcox(deltaBP ~ dose , groups = PBG$Rabbit, 
-    data = PBG, K = 2, lambda = -1, s = 15, steps = 500, start = "quantile", plot.opt = 0)
-# Minimal Disparity: 449.5876 at tol= 1.6 
-# Minimal Disparity with EM converged: 449.5876 at tol= 1.6
-
+test2 <- tolfind.boxcox(deltaBP ~ dose , groups = PBG$Rabbit, find.in.range = c(0, 2),
+    data = PBG, K = 2, lambda = -1, s = 15,  start = "quantile", plot.opt = 0)
+test2$Mintol
+# [1] 1.6
+test2$MinDisparity
+# [1] 449.5876
 
 
 

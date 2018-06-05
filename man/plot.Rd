@@ -25,6 +25,8 @@ for the \code{np.boxcoxmix()}, \code{optim.boxcox()} and \code{tolfind.boxcox()}
 \item{6}{The histograms of residuals of the original against the transformed data.}
 \item{7}{works only for the \code{tolfind.boxcox()} function and plots the specified range of \code{tol} against the disparities}
 \item{8}{works only for the \code{optim.boxcox()} function and gives the profile likelihood function that summarises information concerning \code{lambda}.}
+\item{9}{works only for the \code{Kfind.boxcox()} function and plots the specified range of \code{K} against the AIC or BIC information criteria}
+\item{10}{works only for the \code{boxcoxtype()} function and gives the profile likelihood function that summarises information concerning \code{lambda} for generalized linear Mixed-effects Models.}
 }
 \description{
 \code{plot()} is a generic function used to produce some useful diagnostic plotting of the functions:

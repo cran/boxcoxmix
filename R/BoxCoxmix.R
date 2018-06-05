@@ -45,13 +45,8 @@ fik <- function(y, x, lambda,  beta, z, sigma){
   K <- length(z)
   f <- matrix(0,n,K)
   theta <- np.theta(y, x, lambda,  beta, z)
-  #theta <- matrix(0, n,K)
   for(i in 1:n){
-  # if  (all(!is.na(x))){  
-  #       xb <- x[i,]%*%beta
-  # } else { xb<- 0 }    
    for(k in 1:K){
-   #theta[i,k] <- (ytrans(y[i],lambda) - xb - z[k])^2
    ytrx <- (1/(2*sigma^2))*theta[i,k]
    d <- ((-1/2)*log(2*pi))
    j <- log(sigma)
@@ -132,21 +127,12 @@ ytrans <-  function(y, lambda=1){
 np.bhat <- function(y, x, w, z, lambda){
   n <- dim(w)[1]
   Ynew <- ytrans(y,lambda)- w%*%z
-  ##
   out <- lm(Ynew ~ -1 + x)
   se<- sqrt(diag(vcov(out)))
-  #beta<-  stats::lm(Ynew ~ -1 + x)$coef
   beta<-  out$coef
   return(list("beta"=beta,"se"=se))
 }
-## SE
-# nb.se <- function(y,x ,w, z, lambda){
-#   n <- dim(w)[1]
-#   Ynew <- ytrans(y,lambda) -w%*%z
-#   out <- stats::lm(Ynew ~ -1 + x)
-#   se<- sqrt(diag(stats::vcov(out)))
-#   return(se)
-# }
+
 
 ## M-step
 #'
@@ -160,8 +146,6 @@ np.mstep<- function(y, x, beta, lambda, w){
   for (S in 1:40){
     z <- np.zk(y, x, w, beta, lambda)
     if  (all(!is.na(x))){    
-        #beta<-  np.bhat(y, x, w, z, lambda)
-        #se <- nb.se(y,x, w, z, lambda)
         bse <- np.bhat(y, x, w, z, lambda)
         beta<-bse$beta
         se<- bse$se
@@ -172,13 +156,9 @@ np.mstep<- function(y, x, beta, lambda, w){
   }
   var <- 0
   for(i in 1:n){
-  # if  (all(!is.na(x))){   
-  #       xb <- x[i,]%*%beta
-  # } else {xb <-0}                           
   theta <- np.theta(y, x, lambda,  beta, z)
   for(k in 1:K){
-  #var<- var+ w[i,k]*(ytrans(y[i],lambda) - xb -z[k])^2
-  var<- var+ w[i,k]*theta[i,k]
+   var<- var+ w[i,k]*theta[i,k]
    }
   }  
   sigma <- sqrt(var/n)
@@ -321,7 +301,7 @@ np.em <- function(y, x, K, lambda=1, steps= 500,tol=0.5, start="gq", EMdev.chang
 #' @rdname vc.em
 #' @export np.boxcox
 np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, steps=500, EMdev.change = 1e-04,
-                     plot.opt = 1, verbose = TRUE, start="quantile", ...){
+                     plot.opt = 1, verbose = TRUE, start="gq", ...){
   call <- match.call()
   ddim <- dim(data)
   mf <- match.call(expand.dots = FALSE)
@@ -367,6 +347,7 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
   disp <- npfit$disparity
   Disparities<- npfit$Disparities
   aic<- disp+2*(length(beta)+2*K)
+  bic<-disp+log(n)*(length(beta)+2*K)
   loglik <- npfit$loglik
   complete.loglik <- npfit$complete.loglik
   masses <- npfit$masses
@@ -401,10 +382,10 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
         if (verbose==T){cat("EM Trajectories plotted.\n")}
       }
     }
-    npresult<- list("call"=call, "yt"=yt, "aic"=aic,"xx"=xnames, "Class"=y,"mform"=mform,"ylim"=ylim, "masses"=masses,
+    npresult<- list("call"=call, "yt"=yt, "aic"=aic, "bic"=bic,"xx"=xnames, "Class"=y,"mform"=mform,"ylim"=ylim, "masses"=masses,
                     "y"=y, "formula"=formula,"data"=data,"EMiteration"= s, "Disparities"=Disparities,
                     "p"=p, "mass.point"=z, "beta"=beta, "se"=se, "sigma"=sigma,
-                    "w" =w, "loglik"= loglik, "profile.loglik" = complete.loglik,
+                    "w" =w, "loglik"= loglik, "complete.loglik" = complete.loglik,
                     "disparity"= disp, "EMconverged" = EMconverged, "fitted" = fitted,
                     "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                     "residuals"=residuals, "residuals.transformed"=residuals.transformed,
@@ -423,10 +404,10 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
     fitted <- "none"
     fitted.transformed <- "none"
     predicted.re <- "none"
-    npresult<- list("call"=call, "yt"=yt, "aic"=aic,"xx"=xnames, "Class"=y,"mform"=mform,"ylim"=ylim, "masses"=masses,
+    npresult<- list("call"=call, "yt"=yt, "aic"=aic, "bic"=bic,"xx"=xnames, "Class"=y,"mform"=mform,"ylim"=ylim, "masses"=masses,
                     "y"=y, "formula"=formula,"data"=data,"EMiteration"= s, "Disparities"=Disparities,
                     "p"=p, "mass.point"=z, "beta"=beta, "se"=se, "sigma"=sigma,
-                    "w" =w, "loglik"= loglik, "profile.loglik" = complete.loglik,
+                    "w" =w, "loglik"= loglik, "complete.loglik" = complete.loglik,
                     "disparity"= disp, "EMconverged" = EMconverged,"fitted" = fitted,
                     "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                     "residuals"=y, "residuals.transformed"=yt,
@@ -493,19 +474,7 @@ bhat <- function(Y, X, sizes, w, z, lambda){
   beta<-  out$coef
   return(list("beta"=beta,"se"=se))
 }
-## SE
-# vc.se <- function(Y, X, sizes, w, z, lambda){
-#   r <- dim(w)[1]
-#   wz  <- w%*%z
-#   WZ <- rep(wz, sizes)
-#   Xlong<-matrix(0, 0, dim(X[[1]])[2])
-#   for(i in 1:r){
-#   Xlong<-rbind(Xlong, X[[i]])}
-#   All<-as.data.frame(cbind(Ynew=unlist(Y)-WZ, Xlong))
-#   out <-  stats::lm(Ynew ~   -1 + Xlong, data=All)
-#   se<- sqrt(diag(stats::vcov(out)))
-#   return(se)
-# }
+
 ##mik
 #'
 #' @rdname vc.em
@@ -514,15 +483,10 @@ mik <- function(Y, X, sizes, lambda,  beta, z, sigma){
   K <- length(z)
   r <- length(sizes)
   m <- matrix(0,r,K)
-  #Ytrans<-ytrans(Y, lambda)
   theta <- vc.theta(Y, X, sizes, lambda,  beta, z)
-  for(i in 1:r){
-  # if  (all(!is.na(X))){  
-  #     Xb <- X[[i]]%*%beta
-  # } else { Xb<- 0 }  
+  for(i in 1:r){ 
   for(k in 1:K){
-  #m[i,k] <- (-sizes[i]/2)*log(2*pi)-sizes[i]*log(sigma)-(1/(2*sigma^2))*sum((Ytrans[[i]] - Xb - z[k])^2) + (lambda -1)*sum(log( Y[[i]]))
-    m[i,k] <- (-sizes[i]/2)*log(2*pi)-sizes[i]*log(sigma)-(1/(2*sigma^2))*theta[i,k] + (lambda -1)*sum(log( Y[[i]]))
+      m[i,k] <- (-sizes[i]/2)*log(2*pi)-sizes[i]*log(sigma)-(1/(2*sigma^2))*theta[i,k] + (lambda -1)*sum(log( Y[[i]]))
    }
   }
   return(m) 
@@ -568,13 +532,8 @@ vc.mstep<- function(Y, X, sizes=1, beta, lambda, w){
   }
   var <- 0
   theta <- vc.theta(Y, X, sizes, lambda,  beta, z)
-  #theta <- matrix(0, r,K)
   for(i in 1:r){
-  # if  (all(!is.na(X))){   
-  #     Xb <- X[[i]]%*%beta
-  #  } else {Xb <-0} 
    for(k in 1:K){
-   #theta[i,k] <- sum((Ytrans[[i]] - Xb - z[k])^2)
    var<- var+ w[i,k]*theta[i,k]
     }
   }
@@ -883,10 +842,11 @@ vc.em <- function (y, x, sizes = 1, K, lambda, steps = 500, tol = 0.5,
 #' vector of coefficients.} \item{sigma}{the standard deviation of the mixing distribution (the square root of the variance).} \item{se}{the standard error of the estimate.}
 #' \item{w}{a matrix of posterior probabilities that element i comes from cluster k.}
 #' \item{loglik}{the log-likelihood of the fitted regression model.}
-#' \item{profile.loglik}{the profile log-likelihood of the fitted regression model.}
+#' \item{complete.loglik}{the complete log-likelihood of the fitted regression model.}
 #' \item{disparity}{the disparity of the fitted regression model.} \item{EMiteration}{provides the number of iterations of the EM algorithm.} 
 #' \item{EMconverged}{TRUE means the EM algorithm converged.} \item{call}{the matched call.} \item{formula}{the formula provided.}
 #' \item{data}{the data argument.} \item{aic}{the Akaike information criterion of the fitted regression model.}
+#'  \item{bic}{the Bayesian information criterion of the fitted regression model.}
 #' \item{fitted}{the fitted values for the individual observations.} \item{fitted.transformed}{the fitted values for
 #' the individual transformed observations.} \item{residuals}{the difference between the observed values and the fitted values.}
 #' \item{residuals.transformed}{the difference between the transformed observed values and the transformed fitted values.}
@@ -909,14 +869,14 @@ vc.em <- function (y, x, sizes = 1, K, lambda, steps = 500, tol = 0.5,
 #' 
 #' @keywords boxcox random variance
 #' @examples
-#' # The Pennsylvanian Hospital Stay Data
+#' #Pennsylvanian Hospital Stay Data
 #' data(hosp, package = "npmlreg")
 #' test1 <- np.boxcoxmix(duration ~ age + wbc1, data = hosp, K = 2, tol = 1, 
 #'     start = "quantile", lambda = 1)
 #' round(summary(test1)$w, digits = 3)
 #' # [1,] 1.000 0.000
 #' 
-#' # Refinery yield of gasoline
+#' # Refinery yield of gasoline Data
 #' data(Gasoline, package = "nlme")
 #' test2.vc <- np.boxcoxmix(yield ~ endpoint + vapor, groups = Gasoline$Sample, 
 #'       data = Gasoline, K = 3, tol = 1.7, start = "quantile", lambda = 0)
@@ -934,7 +894,7 @@ vc.em <- function (y, x, sizes = 1, K, lambda, steps = 500, tol = 0.5,
 #' @export np.boxcoxmix
 np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
                     steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
-                    start = "quantile", ...){
+                    start="gq", ...){
   call <- match.call()
   mform <- strsplit(as.character(groups), "\\|")
   mform <- gsub(" ", "", mform)
@@ -964,6 +924,7 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   Beta <- fit$beta
   Sigma<- fit$sigma
   aic<- fit$aic
+  bic<- fit$bic
   y <- fit$y
   yt <- fit$yt
   fitted <- fit$fitted
@@ -978,14 +939,14 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   Disp <- fit$disparity
   Disparities <- fit$Disparities
   Loglik <- fit$loglik
-  profile.loglik <- fit$profile.loglik
+  complete.loglik <- fit$complete.loglik
   kind <- fit$kind
   EMconverged <- fit$EMconverged
   model <- fit$model
   if (model == "mixed") {
     result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
-                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "masses"=masses, "y"=y, "yt"=yt,
-                  "profile.loglik" = profile.loglik, 
+                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "bic"=bic,"masses"=masses, "y"=y, "yt"=yt,
+                  "complete.loglik" = complete.loglik, 
                   "disparity"= Disp, "EMconverged" = EMconverged, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed,"kind"=kind,
@@ -993,8 +954,8 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
     class(result)<-"boxcoxmix"
   }else{
     result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
-                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "masses"=masses, "y"=y, "yt"=yt,
-                  "profile.loglik" = profile.loglik, 
+                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "bic"=bic, "masses"=masses, "y"=y, "yt"=yt,
+                  "complete.loglik" = complete.loglik, 
                   "disparity"= Disp, "EMconverged" = EMconverged, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed,"kind"=kind,
@@ -1027,7 +988,7 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
 #' @export  
 vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
                       steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
-                      start = "quantile", ...) 
+                      start="gq", ...) 
 {
   call <- match.call()
   data <- as.data.frame(data)
@@ -1092,6 +1053,7 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   complete.loglik <- vfit$complete.loglik
   masses <- vfit$masses
   aic <- disp + 2 * (length(beta) + 2 * K)
+  bic<-disp+log(N)*(length(beta)+2*K)
   yt <- ytrans(y, lambda)
   if (K == 1) {
     ylim <- "none"
@@ -1148,11 +1110,11 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
         }
       }
     }
-    result <- list(call = call, aic = aic, xx = xnames, yt = yt, Disparities = Disparities,
+    result <- list(call = call, aic = aic, bic = bic, xx = xnames, yt = yt, Disparities = Disparities,
                    Class = sizes, mform = mform, ylim = ylim, masses = masses, 
                    y = y, formula = formula, data = data, EMiteration = EMiter, 
                    p = p, mass.point = z, beta = beta, se = se, sigma = sigma, 
-                   w = w, loglik = loglik, profile.loglik = complete.loglik, 
+                   w = w, loglik = loglik, complete.loglik = complete.loglik, 
                    disparity = disp, EMconverged = EMconverged, fitted = fitted, 
                    fitted.transformed = fitted.transformed, predicted.re = predicted.re, 
                    residuals = residuals, residuals.transformed = residuals.transformed, 
@@ -1176,11 +1138,11 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
     fitted <- "none"
     fitted.transformed <- "none"
     predicted.re <- "none"
-    result <- list(call = call, aic = aic, xx = xnames, yt = yt, Disparities = Disparities,
+    result <- list(call = call, aic = aic, bic = bic, xx = xnames, yt = yt, Disparities = Disparities,
                    Class = sizes, mform = mform, ylim = ylim, masses = masses, 
                    y = y, formula = formula, data = data, EMiteration = EMiter, 
                    p = p, mass.point = z, beta = beta, se = se, sigma = sigma, 
-                   w = w, loglik = loglik, profile.loglik = complete.loglik, fitted = fitted, 
+                   w = w, loglik = loglik, complete.loglik = complete.loglik, fitted = fitted, 
                    fitted.transformed = fitted.transformed, predicted.re = predicted.re,
                    disparity = disp, EMconverged = EMconverged, residuals = y, 
                    residuals.transformed = yt, kind = 1, model= model)

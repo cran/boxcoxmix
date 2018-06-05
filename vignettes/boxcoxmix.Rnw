@@ -1,6 +1,4 @@
 \documentclass[nojss]{jss}
-%\VignetteIndexEntry{boxcoxmix: An R Package for Response Transformations for Random Effect and Variance Component Models}
-\usepackage[]{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 %\usepackage[backend=bibtex]{biblatex}
@@ -17,7 +15,7 @@ Qassim University and Durham University}
 %\SweaveOpts{prefix.string=text}
 
 \Abstract{
-Random effect models have become a mainstream statistical technique over the last decades; and the
+Random effect models have become a mainstream statistical technique over the last decades, and the
 same can be said for response transformation models such as the Box-Cox transformation.
 The latter ensures that the assumptions of normality and of homoscedasticity of the response distribution are fulfilled, which
 are essential conditions for the use of a linear model or a linear mixed model.  However, methodology for response transformation and {\it simultaneous} inclusion of 
@@ -53,6 +51,8 @@ and \\
 \SweaveOpts{concordance=TRUE}
 %\SweaveOpts{concordance=TRUE}
 \baselineskip 15pt
+%\VignetteIndexEntry{boxcoxmix: An R Package for Response Transformations for Random Effect and Variance Component Models}
+%\VignetteDepends{stats, graphics, tools, utils}
 
 \section{Introduction}
 In regression analysis, the data needs to achieve normality and homoscedasticity of the response distribution in order to enable access to linear model theory and 
@@ -71,15 +71,11 @@ each iteration of this algorithm is based on two steps: the expectation step (E-
 \cite{Aitkin1999, Aitkin2009} and \cite{Einbeck2007} for details. The maximum likelihood (ML) estimate via the EM algorithm is a 
 preferable approach due to its generality and simplicity; when the underlying complete data come from an exponential family whose 
 ML estimates are easily computed, then each maximization step of an EM algorithm is likewise easily computed \citep{Dempster1977}. 
-This algorithm is implemented in \textbf{\textsf{R}} function \code{alldist()}, which is designed to account for simple 
-overdispersion models using the NPML estimation, while variance component models can be fitted with \code{allvc()} in the 
-\pkg{npmlreg} package \citep{Aitkin2009,Einbeck2014}. For both overdispersed and variance component models, 
-the EM algorithm for NPML estimation of the mixing distribution was regarded as ``very stable and converged in every case'' \citep{Aitkin1999}.
+For both overdispersed and variance component models, the EM algorithm for NPML estimation of the mixing distribution was regarded as ``very stable and converged in every case'' \citep{Aitkin1999}.
 
 A particular appealing aspect of the NPML approach is that the posterior probability that a certain unit belongs to a certain cluster corresponds  to the weights in the final iteration of the EM algorithm \citep{sofroniou2006analyzing}. Another benefit of this approach is that increasing the number of mass points requires little computational effort and that the mass--points are not restricted to lie on a grid \citep{aitkin1996}. Aitkin concluded that 
 ``the simplicity and generality of the non--parametric model and the EM algorithm for full NPML estimation 
-in overdispersed exponential family models make them a powerful modelling tool''. The ability of the EM algorithm to locate the global maximum in fewer iterations can be affected by the choice of initial values, 
-several methods for choosing initial values for the EM algorithm in the case of finite mixtures are discussed by \cite{KarlisXekalaki2003}. 
+in overdispersed exponential family models make them a powerful modelling tool''. The ability of the EM algorithm to locate the global maximum in fewer iterations can be affected by the choice of initial values; several methods for choosing initial values for the EM algorithm in the case of finite mixtures are discussed by \cite{KarlisXekalaki2003}. 
 A grid search for setting the initial values was suggested by \cite{Laird1978}. \cite{Hou2011} found limited difference from subsequent 
 test of structural effects if the factors with structural effects were omitted during the estimating process for the Box-Cox power 
 transformation parameter. They noted that the Box-Cox transformation works better only if the cluster sizes are very large; and it 
@@ -96,17 +92,16 @@ thereby not requiring parametric assumptions on their distribution. This is achi
 towards a ``Nonparametric Profile Maximum Likelihood (NPPML)'' technique. To the best of our knowledge, the approach turns out to be the only one of its 
 kind that has implemented the Box-Cox power transformation of the linear mixed effects model with an unspecified random effect distribution. 
 
-In this article, we introduce the \pkg{boxcoxmix} package for response transformations for random effect and variance component 
-models \citep{Amani}, which is available from the Comprehensive \textbf{\textsf{R}} Archive Network (CRAN) at 
-\url{https://cran.r-project.org/package=boxcoxmix}. 
-\pkg{boxcoxmix} combines 
-the Box-Cox transformation with random effects and variance component models. For an implementation of the Box-Cox transformation 
-for the univariate linear model in \textbf{\textsf{R}}, see the \code{boxcox()} function in the \pkg{MASS} package \citep{VenablesRipley2002}. 
+
+For an existing implementation of the Box-Cox transformation 
+for the univariate linear model in \textbf{\textsf{R}}, we mention the \code{boxcox()} function in the \pkg{MASS} package \citep{VenablesRipley2002}. 
 Essentially, \code{boxcox()} calculates 
 and plots the profile log-likelihood for the univariate linear model against a set of $\lambda$ values, in order to locate 
 the transformation parameter under which the log-likelihood is maximized (yielding, after transformation, data that follow a normal distribution 
-more closely than the untransformed data).  We 
-extend this transformation to \pkg{boxcoxmix}'s random effect and variance component models using the NPPML technique. \\
+more closely than the untransformed data). In turn, the NPML methodology is  implemented in the \pkg{npmlreg} package \citep{Aitkin2009,Einbeck2014},
+which provides functions  \code{alldist()} and \code{allvc()} for simple overdispersion models and variance component models, respectively.  In this article,  we introduce the \pkg{boxcoxmix} package which can be considered as a comnination of the Box--Cox and NPML concepts and which
+implements transformation models for random effect and variance component models using the NPPML technique.   The package is available from the Comprehensive \textbf{\textsf{R}} Archive Network (CRAN) at 
+\url{https://cran.r-project.org/package=boxcoxmix}. 
 
 
 The remainder of the article is organized as follows. Section \ref{boxcoxran} begins by providing a general introduction to the Box-Cox transformation 
@@ -201,13 +196,12 @@ We now apply the expectation-maximization (EM) approach to find the maximum like
 Given some starting values $\beta^{0}, \sigma^{0}$, $z_{k}^{0}$, and $\pi^{0}_{k}$ (discussed in a separate subsection below),
 set  $\hat{\beta}=\beta^{0}$, $\hat{\sigma}= \sigma^{0}$, $\hat{z}_{k}=  z_{k}^{0}$, $\hat{\pi}_{k} = \pi^{0}_{k}$,  $k=1,2,\ldots ,K$, and iterate between
 
-\textbf{E-step:} Adjust weights using the formula
+\textbf{E-step:} Estimate $G_{ik}$ by its expectation
 \begin{equation} 
 \label{wik}
 w_{ik}= \frac{\hat{\pi}_{k} f_{ik}}{\sum_{\ell}\hat{\pi}_{\ell} f_{i\ell}}
 \end{equation} \\
-where $w_{ik}$ is the posterior probability that observation $y_{i}$ comes from cluster $k$, 
-and $f_{ik}$ depends via equation (\ref{fik}) implicitly on the current values of $\hat{z}_{k}$, $\hat{\beta}$ and $\hat{\sigma}^{2}$.\\
+which is the posterior probability that observation $y_{i}$ comes from cluster $k$. Note that $f_{ik}$ depends via equation (\ref{fik}) implicitly on the current values of $\hat{z}_{k}$, $\hat{\beta}$ and $\hat{\sigma}^{2}$.\\
 \\
 \textbf{M-step:} The estimators $\hat{\beta}, \hat{\sigma}^{2}, \hat{z}_{k}$ and $ \hat{\pi}_{k} $ can be obtained 
  using the current $w_{ik}$, via the following four equations which were obtained through manual derivation of the NPML estimators for fixed $K$:\\
@@ -221,6 +215,7 @@ We see from this that $\hat{\pi}_k$ is the average posterior probability for com
 
 Replacing the results into Equation (\ref{eq: lr}) we get the non-parametric profile log-likelihood function
 \begin{equation}
+\label{nppll}
 \ell_{P} (\lambda)= \sum^{n}_{i=1} \sum_{k=1}^{K} \Bigg[ G_{ik} \log \hat{\pi}_{k} + G_{ik} \log \hat{f}_{ik}\Bigg].
  \end{equation}
 The non-parametric profile maximum likelihood (NPPML) estimator is therefore given by \\
@@ -234,25 +229,27 @@ log-likelihood function values being less than an arbitrary parameter such as $\
 
 
 In package \pkg{boxcoxmix}, the main function for fitting random effect models with response transformations is \code{optim.boxcox()}, which 
- performs a grid search over the parameter $\lambda$ and then optimizes over this grid, 
-in order to calculate the maximum likelihood estimator of the transformation. It produces a plot of the non-parametric profile likelihood function that summarises 
+ performs a grid search of (\ref{nppll}) over the parameter $\lambda$ and then optimizes over this grid, 
+in order to calculate the maximum likelihood estimator $\hat{\lambda}$ of the transformation. It produces a plot of the non-parametric profile likelihood function that summarises 
 information concerning $\lambda$, including a vertical line indicating the best value of $\lambda$ that maximizes the non--parametric profile log--likelihood.  
-In order to fit models with fixed value of $\lambda$, one can use function \code{np.boxcoxmix()} that is designed to account for `overdispersed' 
-linear models and variance component models.  When $\lambda$ =1 (no transformation), the results of the proposed approach will be very similar to that of the \pkg{npmlreg} 
+In order to fit models with fixed value of $\lambda$, one can use function \code{np.boxcoxmix()}.
+%that is designed to account for `overdispersed' linear models and variance component models.  
+When $\lambda$ =1 (no transformation), the results of the proposed approach will be very similar to that of the \pkg{npmlreg} 
 function \code{alldist()}. However, the function \code{np.boxcoxmix()} is not a copy or extension of the \code{alldist()} function; 
 the implementation is based on directly computing (\ref{eq: betar1})-(\ref{eq: p1}) rather than relying on the output of the \code{glm()} function. 
 
+Beside the parameter estimates, the function produces the standard errors of the estimates and the 
+log--likelihood value. Further, the Akaike Information Criterion (AIC) is calculated to find the best fitting line for the data, using the expression
+\begin{equation} \label{aic}
+\mbox{AIC} = -2 \log  L +2\times (p+2K)
+\end{equation}
+where $p$ is the number of parameters in $\beta$ and $K$ is the number of mixture classes.
 
 To support diagnostics and model checking, a plot of the disparity with the iteration number on the x-axis and the mass points on the y-axis,  as well as 
 normal Q-Q plots to determine how well a set of values follow a normal distribution, can be obtained. Furthermore, control charts of the 
 residuals of the data before and after applying the transformation  can be produced to detect special causes of variation. 
 There are many possible causes of an out--of--control point, 
-including non-normal data and the number of classes, $K$. Additionally, it produces the parameter estimates, the standard errors of the estimates and the 
-log-likelihood value. Further, the Akaike Information Criterion (AIC) is calculated to find the best fitting line for the data, using the following formula
-\begin{equation} \label{aic}
-\mbox{AIC} = -2 \log  L +2\times (p+2K)
-\end{equation}
-where $p$ is the number of parameters in $\beta$ and $K$ is the number of mixture classes.
+including non-normal data and the number of classes, $K$. 
 
 
 \subsection{Starting point selection and the first cycle} 
@@ -269,9 +266,9 @@ and $s$ is the standard deviation of residuals defined as,
 \begin{equation}
 s=\sqrt{\frac{1}{n-p}\sum_{i=1}^{n} \hat{\varepsilon_{i}}^{2}}
 \end{equation}
-where $n-p$ is the degrees of freedom for $\hat{\varepsilon_{i}}$, $n$ is the sample size, $p$ represents the number of parameters used 
-to fit the model $y_{i}^{(\lambda)}=x_{i}^{T}\beta + \varepsilon_{i}$ and $\hat{\varepsilon_{i}}$ is the difference between the observed 
-data of the dependent variable $y_{i}^{(\lambda)}$ and the fitted values $\hat{y_{i}}^{(\lambda)}$(i.e. $\hat{\varepsilon_{i}}=y_{i}^{(\lambda)}-\hat{y_{i}}^{(\lambda)}$).
+where $n-p$ is the degrees of freedom for $\hat{\varepsilon}_{i}$, $n$ is the sample size, $p$ represents the number of parameters used 
+to fit the model $y_{i}^{(\lambda)}=x_{i}^{T}\beta + \varepsilon_{i}$ and $\hat{\varepsilon}_{i}$ is the difference between the observed 
+data of the dependent variable $y_{i}^{(\lambda)}$ and the fitted values $\hat{y_{i}}^{(\lambda)}$(i.e. $\hat{\varepsilon}_{i}=y_{i}^{(\lambda)}-\hat{y_{i}}^{(\lambda)}$).
 \item Quantile-based version 
 \begin{equation}
 z_{k}^0= \bar{y}^{(\lambda)}+\emph{tol}  \times q_{k}^{(\lambda)}
@@ -297,7 +294,7 @@ can be applied on the output of \code{np.boxcoxmix()}, \code{optim.boxcox()} and
 The plots to be printed depend on the choice of the argument \code{plot.opt}, \\
 \begin{itemize}
 \item 1, the disparities with the iteration number against the mass points;
-\item 2, the fitted value against the response of the untransformed and the transformed data; 
+\item 2, the fitted values against the response of the untransformed and the transformed data; 
 \item 3, probability plot of residuals of the untransformed against the transformed data;
 \item 4, individual posterior probabilities;
 \item 5, control charts of residuals of the untransformed against the transformed data;
@@ -325,15 +322,14 @@ suggest to fit a number of models including the Inverse Gaussian model and compa
 %We use $K=3$ for all fitted models, which we justify 
 %lateron.
 
-For a fixed value of $\lambda$,   the model can be fitted  using 
-function \code{np.boxcoxmix()} with settings $\lambda=-1$,  $tol=1.8$ and $K=3$ (the latter two choices to be justified below), so the response will be 
+For a fixed value of $\lambda$, we fit the model with settings $\lambda=-1$,  $tol=1.8$ and $K=3$ (the latter two choices to be justified below), so the response will be 
 transformed as 
 \[
 y^{(\lambda)}=(y^{-1} -1)/-1 = -y^{-1} +1.
 \]
 Using \code{np.boxcoxmix()},
 
-<<result=tex>>=
+<<>>=
 library(boxcoxmix)
 data(strength, package="mdscore")
 test.inv <- np.boxcoxmix(y ~ cut *lot, data = strength, K = 3,  
@@ -344,7 +340,7 @@ test.inv
 
 For comparison, we also fit the same model without transformation, using function \code{np.boxcoxmix()} with setting $\lambda=1$, $tol=1.8$ and $K=3$:
 
-<<result=tex>>=
+<<>>=
 test.gauss <- np.boxcoxmix(y ~ cut *lot, data = strength, K = 3,  
                          tol = 1.8,  start = "gq", lambda = 1, verbose=FALSE) 
 test.gauss
@@ -354,7 +350,7 @@ Using now our grid search method \code{optim.boxcox()} that calculates and plots
 values for the fitted model (\ref{eq:np1}) against a set of $\lambda$ values, and locates the MLE $\hat{\lambda}$ (see Fig. \ref{fig:str3}):
 
 
-<<result=tex, eval=FALSE>>=
+<<eval=FALSE>>=
 test.optim <- optim.boxcox(y ~ cut*lot, data = strength,  K = 3,
                            tol = 1.8, start = "gq", find.in.range = c(-3, 3),
                            s = 60) 
@@ -375,7 +371,7 @@ which is close to zero, suggesting that some transformation need to be carried o
 
 We also fit the model shown in (\ref{eq:np1}) with an Inverse Gaussian distribution using the \pkg{npmlreg} function \code{alldist()}, 
 using $tol=0.45$ and $K=3$. 
-<<result=tex>>=
+<<>>=
 library(npmlreg)
 inv.gauss <- alldist(y ~ cut*lot,  data = strength, k = 3,   tol = 0.45, verbose=FALSE) 
 inv.gauss
@@ -400,7 +396,7 @@ Similarly, the value $tol=0.45$ used by \code{alldist()} has been selected as th
  The Akaike Information Criteria (AIC) defined in (\ref{aic}), is used as a criterion for choosing amongst 
 the models. The model with the lowest AIC value is considered as the best model.
 Table \ref{table:str3} displays summary statistics for the Inverse Gaussian distribution model (Inv.Gauss), 
-transformed model using $\lambda =-1$ and $\hat{\lambda}=0.1$, and the untransformed model ($\lambda =1$). 
+transformed models using $\lambda =-1$ and $\hat{\lambda}=0.1$, and the untransformed model ($\lambda =1$). 
 
 \begin{table}
 \centering
@@ -427,7 +423,7 @@ $\delta_{2,5}$ & -0.1923&0.2595&0.3378& 0.3536   \\
 
  The Inverse Gaussian model gives the worst AIC. Better AIC values are given by the transformed model using $\lambda =-1$, the 
 Gaussian ($\lambda =1$) and $\hat{\lambda}$. The lowest AIC found was for the transformed model using $\hat{\lambda}$ with -68.0224. 
-The parameter estimates of the untransformed and the Box--Cox--transformed model using $\hat{\lambda}$ are in broadly agreement but the latter has better 
+The parameter estimates of the untransformed and the Box--Cox--transformed model using $\hat{\lambda}$ are broadly in agreement but the latter has better 
 disparity and AIC values. However, the results from the other models are quite different and the worst disparity was found for the Inverse 
 Gaussian model. Among the four models,  the one with  $\hat{\lambda}=0.1$ provides the best fit of the data,  
 which does not necessarily support the model choice taken in \cite{shuster1972}.
@@ -435,7 +431,7 @@ which does not necessarily support the model choice taken in \cite{shuster1972}.
 \begin{table}
 \centering
 \begin{tabular}{ cccc  }
- K & $\lambda =-1$   &$\hat{\lambda}=0.1$ &$\lambda=1$  \\
+ $K$ & $\lambda =-1$   &$\hat{\lambda}=0.1$ &$\lambda=1$  \\
    \hline
  1 & -28.0144 &  -31.5791 &  -27.4505\\
    2   &  -48.1073 & -54.7102  &-42.6445 \\
@@ -497,15 +493,14 @@ We apply the expectation-maximization (EM) approach similar as before, with the 
 \textbf{E-step:} This is identical to (\ref{wik}), but with $f_{ik}$ replaced by $m_{ik}$.\\
 \textbf{M-step:} 
 Using the current $w_{ik}$, the four estimators are now:
-
 \begin{eqnarray*}
-\hat{\beta}^{(\lambda)}&=&\left(  \sum^{r}_{i=1}  \sum_{j=1}^{n_{i}} x_{ij} x_{ij}^{T} \right)^{-1} \sum^{r}_{i=1} \sum_{j=1}^{n_{i}} x_{ij} 
+\hat{\beta}&=&\left(  \sum^{r}_{i=1}  \sum_{j=1}^{n_{i}} x_{ij} x_{ij}^{T} \right)^{-1} \sum^{r}_{i=1} \sum_{j=1}^{n_{i}} x_{ij} 
 \left(  y_{ij}^{(\lambda)} - \sum_{k=1}^{K} w_{ik} \hat{z}_{k} \right),\label{eq: betav1}\\
-\hat{\sigma}^{2 (\lambda)} &=& \frac{\sum^{r}_{i=1} \sum_{k=1}^{K} w_{ik} \left[\sum_{j=1}^{n_{i}}(y_{ij}^{(\lambda)} - x_{ij}^{T} \hat{\beta}-\hat{z}_{k})^{2}\right]}{\sum^{r}_{i=1} n_{i}}, \\
-\hat{z}^{(\lambda)}_{k} &=& \frac{\sum^{r}_{i=1} w_{ik}\left[ \sum_{j=1}^{n_{i}} (y_{ij}^{(\lambda)} - x_{ij}^{T} \hat{\beta})\right]}{\sum^{r}_{i=1} n_{i} w_{ik}}, \label{eq: zv1}\\
- \hat{\pi}^{(\lambda)}_{k} &=&\frac{\sum^{r}_{i=1} w_{ik}}{r},
+\hat{\sigma}^{2} &=& \frac{\sum^{r}_{i=1} \sum_{k=1}^{K} w_{ik} \left[\sum_{j=1}^{n_{i}}(y_{ij}^{(\lambda)} - x_{ij}^{T} \hat{\beta}-\hat{z}_{k})^{2}\right]}{\sum^{r}_{i=1} n_{i}}, \\
+\hat{z}_{k} &=& \frac{\sum^{r}_{i=1} w_{ik}\left[ \sum_{j=1}^{n_{i}} (y_{ij}^{(\lambda)} - x_{ij}^{T} \hat{\beta})\right]}{\sum^{r}_{i=1} n_{i} w_{ik}}, \label{eq: zv1}\\
+ \hat{\pi}_{k} &=&\frac{\sum^{r}_{i=1} w_{ik}}{r},
 \end{eqnarray*}
-where $\hat{\pi}^{(\lambda)}_{k}$ is the average posterior probability for component $k$.  Substituting the results into Equation (\ref{eq: 9}) we get the non-parametric profile log-likelihood function 
+where $\hat{\pi}_{k}$ is the average posterior probability for component $k$.  Substituting the results into Equation (\ref{eq: 9}) we get the non-parametric profile log-likelihood function 
 \begin{equation}
  \ell_{P} (\lambda)= \sum^{r}_{i=1} \sum_{k=1}^{K} \Bigg[ G_{ik} \log \hat{\pi}_{k} + G_{ik} \log \hat{m}_{ik}\Bigg].
 \end{equation}
@@ -514,8 +509,7 @@ The non--parametric profile maximum likelihood (NPPML) estimator is therefore gi
 \hat{\lambda} = arg  \, \max_\lambda \: \ell_{P} (\lambda).
 \end{equation} 
 
-Fitting variance component models using response transformations with an unspecified mixing distribution also can be done in \textbf{\textsf{R}}
-using the \pkg{boxcoxmix} function \code{np.boxcoxmix()}. When $\lambda$ =1 (no transformation), the results of the proposed 
+For fixed $\lambda$, such variance component models under response transformations are again estimated using the function \code{np.boxcoxmix()}. When $\lambda$ =1 (no transformation), the results of the proposed 
 approach will be similar to that of the \pkg{npmlreg} function \code{allvc()}. 
 
 \subsection{Application to the heights of boys in Oxford data}
@@ -532,7 +526,7 @@ $z_{i}$ is boy--specific random effect and ${\tt age}_{j}$ is the $j$-th standar
 which is equal for all boys for fixed $j$. A model with $K=6$ mass points without response transformation can be fitted 
 using the \code{np.boxcoxmix()} function setting $\lambda=1$, 
 
-<<result=tex>>=
+<<>>=
 data(Oxboys, package="nlme")
 Oxboys$boy <- gl(26,9)
 Oxboys$boy 
@@ -548,11 +542,12 @@ plot(testox, 1)
 \label{fig:massvc}
 \end{figure}
 
-The manual specification of \code{Oxboys$boy <- gl(26,9)} is necessary since the second argument of \code{np.boxcoxmix} requires a vector of group labels in order to work correctly.
+The manual specification of \code{Oxboys$boy <- gl(26,9)} is necessary since the second argument of \code{np.boxcoxmix} 
+requires a vector of group labels in order to work correctly.
 
 The  function \code{optim.boxcox()} can again  be used to perform a grid search over $\lambda$ to obtain the optimum: 
 
-<<result=tex, eval=FALSE>>=
+<<eval=FALSE>>=
 testo <- optim.boxcox(height ~ age, groups = Oxboys$boy, data = Oxboys, 
          K = 6,  tol =1, start = "gq",  find.in.range=c( -1.2, 0.1),  s=15)
 plot(testo, 8)
@@ -566,7 +561,7 @@ plot(testo, 8)
 
 From Figure \ref{fig:boyoptim}, it can be seen that the best estimate of $\lambda$ that maximizes the non-parametric profile log-likelihood is $-0.25$, 
 suggesting that some transformation need to be carried out to make the data distribution more normal. 
-The following results of the data before and after applying the response transformation shown in Table  \ref{table:boy} 
+The results before and after applying the response transformation shown in Table  \ref{table:boy} 
 prove that the decision of transforming the response is reasonable.
 \begin{table}
 \centering

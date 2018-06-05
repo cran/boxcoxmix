@@ -51,7 +51,7 @@ print.boxcoxmix <- function(x,digits=max(3,getOption('digits')-3),na.print='', .
     print.default(format(x$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (x$kind=='3'){
-  cat("Maximum profile Log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
+  cat("Maximum profile log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
     np <- length(x$beta)
     m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
     mass.points <- x$beta[m]
@@ -114,7 +114,7 @@ print.boxcoxmixpure <- function(x,digits=max(3,getOption('digits')-3),na.print='
     print.default(format(x$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (x$kind=='3'){
-    cat("Maximum profile Log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
+    cat("Maximum profile log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
     np <- length(x$beta)
     m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
     mass.points <- x$beta[m]
@@ -190,7 +190,7 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
     print.default(format(object$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (object$kind=='3'){
-    cat("Maximum profile Log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
+    cat("Maximum profile log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
     np <- length(object$beta)
     m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
     mass.points <- object$beta[m]
@@ -259,7 +259,7 @@ summary.boxcoxmixpure <- function(object,digits=max(3,getOption('digits')-3), ..
     print.default(format(object$AllEMconverged,digits),print.gap=2,quote=FALSE) 
   }
   if (object$kind=='3'){
-    cat("Maximum profile Log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
+    cat("Maximum profile log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
     np <- length(object$beta)
     m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
     mass.points <- object$beta[m]
@@ -305,6 +305,8 @@ summary.boxcoxmixpure <- function(object,digits=max(3,getOption('digits')-3), ..
 #' \item{6}{The histograms of residuals of the original against the transformed data.}
 #' \item{7}{works only for the \code{tolfind.boxcox()} function and plots the specified range of \code{tol} against the disparities}
 #' \item{8}{works only for the \code{optim.boxcox()} function and gives the profile likelihood function that summarises information concerning \code{lambda}.}
+#' \item{9}{works only for the \code{Kfind.boxcox()} function and plots the specified range of \code{K} against the AIC or BIC information criteria}
+#' \item{10}{works only for the \code{boxcoxtype()} function and gives the profile likelihood function that summarises information concerning \code{lambda} for generalized linear Mixed-effects Models.}
 #' 
 #' @import "stats"
 #' @import "graphics"
@@ -315,7 +317,7 @@ summary.boxcoxmixpure <- function(object,digits=max(3,getOption('digits')-3), ..
 plot.boxcoxmix<-function(x,plot.opt=1, ...){
   
   K<-length(x$mass.point) 
-  if (plot.opt %in% c(7,8)){graphics::par(mfrow=c(1,1))}
+  if (plot.opt %in% c(7,8,9,10)){graphics::par(mfrow=c(1,1))}
   else if (plot.opt%in% c(1,4,5)){
     graphics::par(mfrow=c(2,1),cex=0.5,cex.axis=1.5,cex.lab=1.5)
   }
@@ -382,12 +384,31 @@ plot.boxcoxmix<-function(x,plot.opt=1, ...){
     graphics::segments(x$tol.min, x$min.Disp, x$tol.min, 1.1 * x$min.Disp, col = 4)
   }
   if (x$kind=='3' &&plot.opt==8){#optim
+    plims <- graphics::par("usr")
+    y0 <- plims[3]
     npc0<-x$npcolor
     result<- x$ylim1
-    max.l <- paste("Maximum profile Log-likelihood:",round(x$objective,digits=3) , "at lambda=", round(x$Maximum,digits=2), "\n")
-    graphics::plot(x$All.lambda, x$profile.loglik, type = "l", xlab = expression(lambda), 
-         ylab = "profile Log-liklihood", ylim = result, col= npc0, main = max.l)
-      graphics::segments(x$Maximum, x$y0, x$Maximum, x$objective, lty = 1, col = "red", lwd = 3)
+     graphics::plot(x$All.lambda, x$profile.loglik, type = "l", xlab = expression(lambda), 
+         ylab = "Profile log-likelihood", ylim = result, col= npc0, main = x$maxl)
+      graphics::segments(x$Maximum, y0, x$Maximum, x$objective, lty = 1, col = "red", lwd = 2)
+  }
+  if (x$kind=='4' && plot.opt==9){#kfind
+    plims <- graphics::par("usr")
+    y0 <- plims[3]
+    if(x$mselect=='1'){
+    graphics::plot(x$All.K, x$Allaic, type = "o", xlab = "K", 
+                   ylab = "AIC", col= "green", main=x$md)
+    graphics::segments(x$Best.K, y0, x$Best.K, x$MinAIC, lty = 2, col = "red", lwd = 2)
+    }else{
+      graphics::plot(x$All.K, x$Allbic, type = "o", xlab = "K", 
+                     ylab = "BIC", col= "green", main=x$md)
+      graphics::segments(x$Best.K, y0, x$Best.K, x$MinBIC, lty = 2, col = "red", lwd = 2)
+    }
+  }
+  if (x$kind=='5' && plot.opt==10){#boxcoxtype
+    graphics::plot(x$All.lam, x$profile.loglik, type = "l", xlab = expression(lambda), 
+                   ylab = "Profile log-likelihood", ylim = x$ylim1, col= "green", main=x$ml)
+    graphics::segments(x$Maximum, x$y0, x$Maximum, x$objective, lty = 1, col = "red", lwd = 3)
   }
   invisible(x)
 }

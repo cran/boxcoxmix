@@ -61,7 +61,7 @@ np.em(y, x, K, lambda = 1, steps = 500, tol = 0.5, start = "gq",
 
 np.boxcox(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE,
-  start = "quantile", ...)
+  start = "gq", ...)
 
 vc.estep(Y, X, sizes = 1, lambda, p, beta, z, sigma)
 
@@ -80,7 +80,7 @@ vc.em(y, x, sizes = 1, K, lambda, steps = 500, tol = 0.5, start = "gq",
 
 vc.boxcox(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE,
-  start = "quantile", ...)
+  start = "gq", ...)
 
 gqz(numnodes = 20, minweight = 1e-06)
 

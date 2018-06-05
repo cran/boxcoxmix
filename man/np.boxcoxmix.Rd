@@ -6,7 +6,7 @@
 \usage{
 np.boxcoxmix(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE,
-  start = "quantile", ...)
+  start = "gq", ...)
 }
 \arguments{
 \item{formula}{a formula describing the transformed response and the fixed
@@ -46,10 +46,11 @@ set.}
 vector of coefficients.} \item{sigma}{the standard deviation of the mixing distribution (the square root of the variance).} \item{se}{the standard error of the estimate.}
 \item{w}{a matrix of posterior probabilities that element i comes from cluster k.}
 \item{loglik}{the log-likelihood of the fitted regression model.}
-\item{profile.loglik}{the profile log-likelihood of the fitted regression model.}
+\item{complete.loglik}{the complete log-likelihood of the fitted regression model.}
 \item{disparity}{the disparity of the fitted regression model.} \item{EMiteration}{provides the number of iterations of the EM algorithm.} 
 \item{EMconverged}{TRUE means the EM algorithm converged.} \item{call}{the matched call.} \item{formula}{the formula provided.}
 \item{data}{the data argument.} \item{aic}{the Akaike information criterion of the fitted regression model.}
+ \item{bic}{the Bayesian information criterion of the fitted regression model.}
 \item{fitted}{the fitted values for the individual observations.} \item{fitted.transformed}{the fitted values for
 the individual transformed observations.} \item{residuals}{the difference between the observed values and the fitted values.}
 \item{residuals.transformed}{the difference between the transformed observed values and the transformed fitted values.}
@@ -85,14 +86,14 @@ as starting points in the EM algorithm, while setting start= "quantile" uses the
 Quantile-based version to select the starting points.
 }
 \examples{
-# The Pennsylvanian Hospital Stay Data
+#Pennsylvanian Hospital Stay Data
 data(hosp, package = "npmlreg")
 test1 <- np.boxcoxmix(duration ~ age + wbc1, data = hosp, K = 2, tol = 1, 
     start = "quantile", lambda = 1)
 round(summary(test1)$w, digits = 3)
 # [1,] 1.000 0.000
 
-# Refinery yield of gasoline
+# Refinery yield of gasoline Data
 data(Gasoline, package = "nlme")
 test2.vc <- np.boxcoxmix(yield ~ endpoint + vapor, groups = Gasoline$Sample, 
       data = Gasoline, K = 3, tol = 1.7, start = "quantile", lambda = 0)
