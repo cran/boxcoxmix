@@ -183,7 +183,7 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
     max.result <- result[s.max]
     lambda.max <- lambda[s.max]
       fit <- np.boxcoxmix(formula=formula, groups= groups, data=data, K=K, lambda=lambda.max, steps= steps,
-                           tol = tol, start=start, EMdev.change = EMdev.change, plot.opt = plot.opt, verbose = verbose)
+                           tol = tol, start=start, EMdev.change = EMdev.change, plot.opt = 0, verbose = verbose)
       W <- fit$w
       P <-  fit$p
       se <- fit$se
@@ -193,8 +193,16 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
       names(Z) <- paste('MASS',1:K,sep='')
       Beta <- fit$beta
       Sigma<- fit$sigma
-      aic<- fit$aic
-      bic<- fit$bic
+      Disp <- fit$disparity
+      Disparities <- fit$Disparities
+      n <- NROW(data)
+      if (fit$model=='pure'){
+       aic<- Disp+2*(2*K)
+       bic<-Disp+log(n)*(2*K)
+       }else{
+      aic<- Disp+2*(length(Beta)+2*K)
+      bic<- Disp+log(n)*(length(Beta)+2*K)
+      }
       y <- fit$y
       yt <- fit$yt
       fitted <- fit$fitted
@@ -206,6 +214,7 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
       predicted.re <- fit$predicted.re
       Class<-fit$Class
       xx <- fit$xx
+      model<-fit$model
       Disp <- fit$disparity
       Disparities <- fit$Disparities
       Loglik <- fit$loglik
@@ -225,7 +234,7 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
                   "disparity"= Disp, "EMconverged" = EMconverged, "Maximum" = lambda.max, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed, "objective"= max.result,"kind"=3,
-                  "EMiteration"= iter, "ss"=s,"s.max"=s.max, "npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx,"maxl"=maxl )
+                  "EMiteration"= iter, "ss"=s,"s.max"=s.max, "npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx,"maxl"=maxl, model= model )
     class(result)<-"boxcoxmix"
   } else{  
     result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
@@ -234,7 +243,7 @@ optim.boxcox<-function(formula, groups=1,data, K=3, steps= 500, tol =0.5, start=
                   "disparity"= Disp, "EMconverged" = EMconverged, "Maximum" = lambda.max, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed, "objective"= max.result,"kind"=3,
-                  "EMiteration"= iter, "ss"=s,"s.max"=s.max,"npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx,"maxl"=maxl)
+                  "EMiteration"= iter, "ss"=s,"s.max"=s.max,"npcolor"=npcolors, "ylim1"=ylim1, "xx" = xx,"maxl"=maxl, model= model)
     class(result)<-"boxcoxmix"
   }
   return(result)

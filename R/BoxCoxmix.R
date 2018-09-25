@@ -346,8 +346,13 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
   se <- npfit$se
   disp <- npfit$disparity
   Disparities<- npfit$Disparities
-  aic<- disp+2*(length(beta)+2*K)
-  bic<-disp+log(n)*(length(beta)+2*K)
+  if (model=='pure'){
+    aic<- disp+2*(2*K-1)
+    bic<-disp+log(n)*(2*K-1)
+  }else{
+      aic<- disp+2*(length(beta)+2*K-1)
+      bic<-disp+log(n)*(length(beta)+2*K-1)
+  }
   loglik <- npfit$loglik
   complete.loglik <- npfit$complete.loglik
   masses <- npfit$masses
@@ -936,6 +941,7 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   predicted.re <- fit$predicted.re
   Class<-fit$Class
   xx <- fit$xx
+  model<- fit$model
   Disp <- fit$disparity
   Disparities <- fit$Disparities
   Loglik <- fit$loglik
@@ -950,16 +956,16 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
                   "disparity"= Disp, "EMconverged" = EMconverged, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed,"kind"=kind,
-                  "EMiteration"= iter, "xx" = xx)
+                  "EMiteration"= iter, "xx" = xx, model= model)
     class(result)<-"boxcoxmix"
   }else{
-    result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
+    result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Z, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
                   "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "bic"=bic, "masses"=masses, "y"=y, "yt"=yt,
                   "complete.loglik" = complete.loglik, 
                   "disparity"= Disp, "EMconverged" = EMconverged, "mform"=length(mform),"ylim"=ylim, 
                   "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
                   "residuals"=residuals, "residuals.transformed"=residuals.transformed,"kind"=kind,
-                  "EMiteration"= iter, "xx" = xx)
+                  "EMiteration"= iter, "xx" = xx, model= model)
     class(result)<-"boxcoxmixpure"
   }
   return(result)
@@ -1052,8 +1058,13 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   EMconverged <- vfit$EMconverged
   complete.loglik <- vfit$complete.loglik
   masses <- vfit$masses
-  aic <- disp + 2 * (length(beta) + 2 * K)
-  bic<-disp+log(N)*(length(beta)+2*K)
+  if (model=='pure'){
+    aic<- disp+2*(2*K-1)
+    bic<-disp+log(N)*(2*K-1)
+  }else{
+    aic<- disp+2*(length(beta)+2*K-1)
+    bic<-disp+log(N)*(length(beta)+2*K-1)
+  }
   yt <- ytrans(y, lambda)
   if (K == 1) {
     ylim <- "none"

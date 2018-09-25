@@ -73,13 +73,13 @@ test1 <- tolfind.boxcox(duration ~ age , data = hosp, K = 2, lambda = 0,
 # Minimal Disparity with EM converged: 137.8368 at tol= 2
 
 # Effect of Phenylbiguanide on Blood Pressure
-data(PBG, package = "nlme")
+\donttest{data(PBG, package = "nlme")
 test2 <- tolfind.boxcox(deltaBP ~ dose , groups = PBG$Rabbit, find.in.range = c(0, 2),
     data = PBG, K = 2, lambda = -1, s = 15,  start = "quantile", plot.opt = 0)
 test2$Mintol
 # [1] 1.6
 test2$MinDisparity
-# [1] 449.5876
+# [1] 449.5876}
 
 
 

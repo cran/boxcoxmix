@@ -224,9 +224,10 @@ summary.boxcoxmixpure <- function(object,digits=max(3,getOption('digits')-3), ..
     k <- length(object$mass.point)
     mass.points <- object$mass.point
     Std.Error <-object$se
-    coef.table <- matrix(c(mass.points),k, ncol=1, byrow = FALSE)
+    tvalue <- object$mass.point/Std.Error
+    coef.table <- matrix(c(mass.points, Std.Error, tvalue),k, ncol=3, byrow = FALSE)
     rownames(coef.table) <-names(object$mass.point)
-    colnames(coef.table) <- c("Estimate")
+    colnames(coef.table) <- c("Estimate", "Std. Error", "t value")
     cat('\nCall: ',deparse(object$call),'\n\n')
     cat('Coefficients')
     cat(":\n")

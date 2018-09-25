@@ -7,7 +7,7 @@
 #' estimation. The main functions are \code{optim.boxcox()} and \code{boxcoxtype()}.
 #' 
 #' \tabular{ll}{ Package: \tab boxcoxmix\cr Type: \tab Package\cr Version: \tab
-#' 0.20\cr Date: \tab 2018-6-5\cr License: \tab GPL (>=3)\cr } 
+#' 0.21\cr Date: \tab 2018-9-25\cr License: \tab GPL (>=3)\cr } 
 #' 
 #' @name boxcoxmix-package
 #' @aliases boxcoxmix boxcoxmix-package

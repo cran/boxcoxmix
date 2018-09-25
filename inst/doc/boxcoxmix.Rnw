@@ -213,10 +213,10 @@ which is the posterior probability that observation $y_{i}$ comes from cluster $
 \end{eqnarray}
 We see from this that $\hat{\pi}_k$ is the average posterior probability for component $k$.  
 
-Replacing the results into Equation (\ref{eq: lr}) we get the non-parametric profile log-likelihood function
+Replacing the results into Equation (\ref{lik_discrete}) we get the non-parametric profile likelihood function $L_P (\lambda)$, or its logarithmic version 
 \begin{equation}
 \label{nppll}
-\ell_{P} (\lambda)= \sum^{n}_{i=1} \sum_{k=1}^{K} \Bigg[ G_{ik} \log \hat{\pi}_{k} + G_{ik} \log \hat{f}_{ik}\Bigg].
+\ell_{P} (\lambda)= \log \Big( \sum_{k=1}^{K} \hat{\pi}^{(\lambda)}_{k}   \hat{f}^{(\lambda)}_{ik} \Big) .
  \end{equation}
 The non-parametric profile maximum likelihood (NPPML) estimator is therefore given by \\
 \begin{equation} \label{eq: NPPML1}
@@ -228,10 +228,7 @@ log-likelihood function values being less than an arbitrary parameter such as $\
 
 
 
-In package \pkg{boxcoxmix}, the main function for fitting random effect models with response transformations is \code{optim.boxcox()}, which 
- performs a grid search of (\ref{nppll}) over the parameter $\lambda$ and then optimizes over this grid, 
-in order to calculate the maximum likelihood estimator $\hat{\lambda}$ of the transformation. It produces a plot of the non-parametric profile likelihood function that summarises 
-information concerning $\lambda$, including a vertical line indicating the best value of $\lambda$ that maximizes the non--parametric profile log--likelihood.  
+In package \pkg{boxcoxmix}, the main function for fitting random effect models with response transformations is \code{optim.boxcox()}, which performs a grid search of (\ref{nppll}) over the parameter $\lambda$ and then optimizes over this grid, in order to calculate the maximum likelihood estimator $\hat{\lambda}$ of the transformation. It produces a plot of the non-parametric profile likelihood function that summarises information concerning $\lambda$, including a vertical line indicating the best value of $\lambda$ that maximizes the non--parametric profile log--likelihood.  
 In order to fit models with fixed value of $\lambda$, one can use function \code{np.boxcoxmix()}.
 %that is designed to account for `overdispersed' linear models and variance component models.  
 When $\lambda$ =1 (no transformation), the results of the proposed approach will be very similar to that of the \pkg{npmlreg} 
@@ -239,11 +236,14 @@ function \code{alldist()}. However, the function \code{np.boxcoxmix()} is not a 
 the implementation is based on directly computing (\ref{eq: betar1})-(\ref{eq: p1}) rather than relying on the output of the \code{glm()} function. 
 
 Beside the parameter estimates, the function produces the standard errors of the estimates and the 
-log--likelihood value. Further, the Akaike Information Criterion (AIC) is calculated to find the best fitting line for the data, using the expression
+log--likelihood value. Further, the the Akaike's Information Criterion (AIC) and Bayesian Information Criteria (BIC) are calculated to find the best fitting line for the data, using the expressions
 \begin{equation} \label{aic}
-\mbox{AIC} = -2 \log  L +2\times (p+2K)
+\mbox{AIC} = -2 \ell_{P}(\lambda) +2\times (p+2K-1+c)
 \end{equation}
-where $p$ is the number of parameters in $\beta$ and $K$ is the number of mixture classes.
+\begin{equation} \label{bic}
+BIC = -2 \ell_{P}(\lambda) +\log(n) \times (p+2K-1+c)
+\end{equation}
+where $\ell_{P}(\lambda)$ is the profile log-likelihood function given in (\ref{nppll}) which is obtained by substituting the maximum likelihood estimators of the model parameters (i.e. $z=\hat{z}$, $\pi=\hat{\pi}$, $\beta=\hat{\beta}$ and $\sigma=\hat{\sigma}$), and the second part of the AIC and BIC equations computes the number of parameters estimated in the model. $p$ is the number of regression parameters in $\hat{\beta}$, $K$ is the number of mixture classes, $c$ is the value $1$ if the transformation parameter is estimated and zero otherwise, and $n$ is the number of observations.
 
 To support diagnostics and model checking, a plot of the disparity with the iteration number on the x-axis and the mass points on the y-axis,  as well as 
 normal Q-Q plots to determine how well a set of values follow a normal distribution, can be obtained. Furthermore, control charts of the 
@@ -259,7 +259,7 @@ of \pkg{boxcoxmix} provides two different methods as outlined below:
 \begin{itemize}
 \item Gauss-Hermite quadrature points \citep{EinbeckHinde2006}:
 \begin{equation}
-z_{k}^0= \beta_{0}+ \emph{tol} \times s \times g_{k}
+z_{k}^0= \hat{\beta}_{0}+ \emph{tol} \times s \times g_{k}
 \end{equation}
 where $\beta_{0}$ is the intercept of the fitted model, \emph{tol} is a scaling parameter restricted to the choice $0 \leq $ \emph{tol} $\leq 2$, $g_{k}$ are Gauss-Hermite quadrature points, 
 and $s$ is the standard deviation of residuals defined as, 
@@ -276,7 +276,7 @@ z_{k}^0= \bar{y}^{(\lambda)}+\emph{tol}  \times q_{k}^{(\lambda)}
 where $\bar{y}^{(\lambda)}$ is the mean of the responses $y_{i}^{(\lambda)}$ and $q_{k}^{(\lambda)} =\frac{k}{K}-\frac{1}{2K}$ are quantiles 
 of the empirical distribution of $y_{i}^{(\lambda)}-\bar{y}^{(\lambda)}$.
 \end{itemize}
-(For either case, \pkg{boxcoxmix} provides the function \code{tolfind.boxcox()} to identify optimal values of \emph{tol}.) 
+(For either case, \pkg{boxcoxmix} provides the functions \code{Kfind.boxcox} and \code{tolfind.boxcox()} to identify optimal values of $K$ and \emph{tol}, respectively.) 
  
 From this one obtains the extended linear predictor for the $k$-th component $E(y_{i}^{(\lambda)}\vert z_{k}^0)=x_{i}^{T}\beta + z_{k}^0$. Using formula (\ref{wik}) 
 with current parameter estimates, one gets an ``initial E-step" and in the subsequent M-step one obtains the parameter estimates by solving the score equations. 
@@ -287,7 +287,7 @@ From the resulting estimates of this cycle, one gets an updated value of the wei
 
 \subsection{Generic functions}
 \pkg{boxcoxmix} supports generic functions such as \code{summary()}, \code{print()} and  \code{plot()}. Specifically, \code{plot()}
-can be applied on the output of \code{np.boxcoxmix()}, \code{optim.boxcox()} and \code{tolfind.boxcox()}.
+can be applied on the output of \code{np.boxcoxmix()}, \code{optim.boxcox()}, \code{Kfind.boxcox} and \code{tolfind.boxcox()}.
 % and to produce some useful diagnostic plots of objects generated by the functions \code{np.boxcoxmix()}, 
 %\code{optim.boxcox()} and \code{tolfind.boxcox()}, 
 %using the generic function \code{plot()}. 
@@ -300,7 +300,8 @@ The plots to be printed depend on the choice of the argument \code{plot.opt}, \\
 \item 5, control charts of residuals of the untransformed against the transformed data;
 \item 6, the histograms of residuals of the untransformed against the transformed data; 
 \item 7, plots the specified range of \emph{tol} against the disparities (works only for the \code{tolfind.boxcox()} function);
-\item 8, gives the profile likelihood function that summarises information concerning $\lambda$ (works only for the \code{optim.boxcox()} function).
+\item 8, gives the profile likelihood function that summarises information concerning $\lambda$ (works only for the \code{optim.boxcox()} function);
+\item 7, plots the specified range of $K$ against the aic or bic values (works only for the \code{Kfind.boxcox} function).
 \end{itemize}
 %Other generic functions for \pkg{boxcoxmix} are \code{summary()} and \code{print()} that print output summaries of fitted models.\\
 
@@ -373,7 +374,7 @@ We also fit the model shown in (\ref{eq:np1}) with an Inverse Gaussian distribut
 using $tol=0.45$ and $K=3$. 
 <<>>=
 library(npmlreg)
-inv.gauss <- alldist(y ~ cut*lot,  data = strength, k = 3,   tol = 0.45, verbose=FALSE) 
+inv.gauss <- alldist(y ~ cut*lot,  data = strength, k = 3,   tol = 0.45, verbose=FALSE,  family = "inverse.gaussian")
 inv.gauss
 @
 
@@ -413,8 +414,8 @@ $\delta_{2,3}$ & 0.5146&0.1813&0.1141& 0.1554   \\
 $\delta_{2,4}$& -0.1999&0.3404&0.4604 & 0.4070  \\
 $\delta_{2,5}$ & -0.1923&0.2595&0.3378& 0.3536   \\
  $\sigma$ & 0.3966&0.06169&0.0207& 0.0206   \\
- $-2 \log L$ &-68 &-73.7& -98 & -86.6 \\
-   AIC & -38& -43.7085 &-68.0224&-56.6193 \\
+ $-2 \log L$ &-68 &-73.70853&-98.02242 & -86.61931\\
+   AIC & -40&-45.7085  &-68.02242&-58.6193  \\
  \hline
 \end{tabular}
 \caption{Comparison of results from original \& transformed data, using $K=3$.}
@@ -425,7 +426,7 @@ $\delta_{2,5}$ & -0.1923&0.2595&0.3378& 0.3536   \\
 Gaussian ($\lambda =1$) and $\hat{\lambda}$. The lowest AIC found was for the transformed model using $\hat{\lambda}$ with -68.0224. 
 The parameter estimates of the untransformed and the Box--Cox--transformed model using $\hat{\lambda}$ are broadly in agreement but the latter has better 
 disparity and AIC values. However, the results from the other models are quite different and the worst disparity was found for the Inverse 
-Gaussian model. Among the four models,  the one with  $\hat{\lambda}=0.1$ provides the best fit of the data,  
+Gaussian model. Among the four models, the one with  $\hat{\lambda}=0.1$ provides the best fit of the data,  
 which does not necessarily support the model choice taken in \cite{shuster1972}.
 
 \begin{table}
@@ -433,13 +434,13 @@ which does not necessarily support the model choice taken in \cite{shuster1972}.
 \begin{tabular}{ cccc  }
  $K$ & $\lambda =-1$   &$\hat{\lambda}=0.1$ &$\lambda=1$  \\
    \hline
- 1 & -28.0144 &  -31.5791 &  -27.4505\\
-   2   &  -48.1073 & -54.7102  &-42.6445 \\
-  3 &   -43.7085 & -68.0224 &-56.6193 \\
-  4 &  -48.4297 &  -57.4002& -50.4271\\
-5&  -55.4437 &  -58.1701 & -47.1773\\
-6&  -62.5389 &  -49.4002 & -42.4272\\
-7&  -47.4436  &   -50.1702 & -52.3925\\
+ 1 & -30.01438 &  -33.57915 &  -29.45051\\
+   2   &  -50.10725 & -56.71019 &-44.64449 \\
+  3 &  -45.70853 &-70.02242&-58.61931 \\
+  4 &  -50.42968 &  -59.40018& -52.4271\\
+5& -57.4437 &  -60.17015 & -49.17725\\
+6&  -64.53892 &  -51.40021 & -44.42724\\
+7&  -49.44363 &   -52.17016 & -54.39248\\
  \hline
 \end{tabular}
 \caption{Comparison of AIC values}
@@ -479,7 +480,7 @@ It is assumed that there is a value of $\lambda$ for which
 y_{ij}^{(\lambda)}\vert z_{i} \sim N(x_{ij}^{T}\beta+z_{i},\sigma^{2})
 \end{equation} 
  where $z_{i}$ is a random effect with an unspecified mixing distribution $g(z_{i})$. The likelihood can now be approximated as \citep{Aitkin2009}
-\begin{equation}
+\begin{equation} \label{eq: 55}
 L(\lambda, \beta, \sigma^{2},g)=\prod^{r}_{i=1} \int \left[\prod^{n_{i}}_{j=1} f(y_{ij} \vert z_{i}) \right] g(z_{i})dz_{i}\approx \prod^{r}_{i=1} \sum_{k=1}^{K}  \pi_{k} m_{ik},
 \end{equation}  
 where $m_{ik} = \prod^{n_{i}}_{j=1} f(y_{ij}\vert z_{k})$. The complete log-likelihood is thus \\
@@ -500,11 +501,7 @@ Using the current $w_{ik}$, the four estimators are now:
 \hat{z}_{k} &=& \frac{\sum^{r}_{i=1} w_{ik}\left[ \sum_{j=1}^{n_{i}} (y_{ij}^{(\lambda)} - x_{ij}^{T} \hat{\beta})\right]}{\sum^{r}_{i=1} n_{i} w_{ik}}, \label{eq: zv1}\\
  \hat{\pi}_{k} &=&\frac{\sum^{r}_{i=1} w_{ik}}{r},
 \end{eqnarray*}
-where $\hat{\pi}_{k}$ is the average posterior probability for component $k$.  Substituting the results into Equation (\ref{eq: 9}) we get the non-parametric profile log-likelihood function 
-\begin{equation}
- \ell_{P} (\lambda)= \sum^{r}_{i=1} \sum_{k=1}^{K} \Bigg[ G_{ik} \log \hat{\pi}_{k} + G_{ik} \log \hat{m}_{ik}\Bigg].
-\end{equation}
-The non--parametric profile maximum likelihood (NPPML) estimator is therefore given by
+where $\hat{\pi}_{k}$ is the average posterior probability for component $k$.  Substituting the results into Equation (\ref{eq: 55}) we get the non-parametric profile likelihood function $L_P (\lambda)$, or its logarithmic version $\ell_P(\lambda)=\log(L_P(\lambda))$. The non--parametric profile maximum likelihood (NPPML) estimator is therefore given by
 \begin{equation}
 \hat{\lambda} = arg  \, \max_\lambda \: \ell_{P} (\lambda).
 \end{equation} 
@@ -569,12 +566,11 @@ prove that the decision of transforming the response is reasonable.
   &\multicolumn{2}{c}{$K=4$   }&\multicolumn{2}{c}{$K=5$   }& \multicolumn{2}{c}{$K=6$   }  &\multicolumn{2}{c}{$K=7$   }  \\
  & $\hat{\lambda}=0.1$   &$\lambda =1$& $\hat{\lambda}=-0.51$   &$\lambda =1$ & $\hat{\lambda}=-0.25$   &$\lambda =1$  & $\hat{\lambda}=-0.25$   &$\lambda =1$\\
    \hline
- NPPML 		&-605.9 &-606.4&-559.7 &-566.5&-513.3&-Inf&-512.4&-566.5\\
-$\hat{\beta}$ 	&0.0716	&6.5264 & 0.0034 &6.5218 &0.0126 & 6.5245  &0.0126&6.5218\\
-$SE(\hat{\beta})$ &0.0031 &0.2841 & 0.0001 &0.2367 &0.0004 & 0.1918  &0.0004&0.2367\\
- $\hat{\sigma}$ &0.0310 & 2.806 & 0.0012 &2.341  &0.0035 &  1.903   &0.0035& 2.341\\
- $-2 \log L$ 	&1211.8 &1212.7 & 1119.3 &1132.8 &1026.2 & 1048.3   &1024.2    &1132.8\\
-   AIC		&1229.8 &1230.7& 1141.3 &1154.9  &1052.2 &  1074.3  &1054.2 &1162.9\\
+$\hat{\beta}$ 	&0.0716	&6.5264 & 0.0034 &6.5218 &0.0126 & 6.5245  &0.0082 &6.5218\\
+$SE(\hat{\beta})$ &0.0031 &0.2841 & 0.0001 &0.2367 &0.0004 & 0.1918  &0.0002&0.2367\\
+ $\hat{\sigma}$ &0.0310 & 2.806 & 0.0012 &2.341  &0.0035 &  1.903   &0.0023 & 2.341\\
+ $-2 \log L$ 	&1211.8 &1212.7 & 1119.3 &1132.8 &1026.2 & 1048.3   &1022.3   &1132.8\\
+   AIC		&1229.8 &1228.659 & 1141.324  &1152.849   &1052.2 &   1072.27   &1052.302  & 1160.849 \\
  \hline
 \end{tabular}
 \caption{Comparison of results from original \& transformed data, using $K=4,5,6$ and $7$}
