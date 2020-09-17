@@ -300,8 +300,10 @@ np.em <- function(y, x, K, lambda=1, steps= 500,tol=0.5, start="gq", EMdev.chang
 #' @importFrom stats model.response
 #' @rdname vc.em
 #' @export np.boxcox
-np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, steps=500, EMdev.change = 1e-04,
-                     plot.opt = 1, verbose = TRUE, start="gq", ...){
+np.boxcox <-function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
+                      steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
+                      start = "gq", ...) 
+{
   call <- match.call()
   ddim <- dim(data)
   mf <- match.call(expand.dots = FALSE)
@@ -310,16 +312,16 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  mf <- model.frame(formula=formula, data=data)
+  mf <- model.frame(formula = formula, data = data)
   model <- "mixed"
   x <- model.matrix(attr(mf, "terms"), data = mf)[, -1, drop = FALSE]
-  if (dim(x)[2]== 0) {
+  if (dim(x)[2] == 0) {
     x <- model.matrix(attr(mf, "terms"), data = mf)
     model <- "pure"
   }
   y <- model.response(mf, "numeric")
   if (any(y <= 0)) 
-   stop("response variable must be positive")
+    stop("response variable must be positive")
   n <- NROW(y)
   xnames <- dimnames(x)[[2]]
   sizes <- groups
@@ -328,8 +330,8 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
   if (length(mform) >= 2) {
     stop("Please use function vc.boxcox for two-level models")
   }
-  npfit <- try(np.em(y=y, x=x, sizes= sizes,  K = K, lambda = lambda, steps = steps,tol = tol,
-                      start = start, EMdev.change = EMdev.change, 
+  npfit <- try(np.em(y = y, x = x, sizes = sizes, K = K, lambda = lambda, 
+                     steps = steps, tol = tol, start = start, EMdev.change = EMdev.change, 
                      plot.opt = plot.opt, verbose = verbose))
   if (class(npfit) == "try-error") {
     cat("Check model specification, change the number of components or specify another value of lambda or tol and try again.")
@@ -337,87 +339,115 @@ np.boxcox<- function(formula, groups=1, data, K = 3, tol = 0.5,  lambda = 1, ste
   }
   s <- npfit$EMiteration
   w <- npfit$w
-  p  <- npfit$p
-  names(p) <- paste('MASS',1:K,sep='')
-  z  <- npfit$mass.point
-  names(z) <- paste('MASS',1:K,sep='')
+  p <- npfit$p
+  names(p) <- paste("MASS", 1:K, sep = "")
+  z <- npfit$mass.point
+  names(z) <- paste("MASS", 1:K, sep = "")
   beta <- npfit$beta
-  sigma <-npfit$sigma
+  sigma <- npfit$sigma
   se <- npfit$se
   disp <- npfit$disparity
-  Disparities<- npfit$Disparities
-  if (model=='pure'){
-    aic<- disp+2*(2*K-1)
-    bic<-disp+log(n)*(2*K-1)
-  }else{
-      aic<- disp+2*(length(beta)+2*K-1)
-      bic<-disp+log(n)*(length(beta)+2*K-1)
+  Disparities <- npfit$Disparities
+  if (model == "pure"){
+    if(K==1){
+      aic <- disp + 2 * 1
+      bic <- disp + log(n) * 1
+    }
+    else {
+      aic <- disp + 2 * (2 * K - 1)
+      bic <- disp + log(n) * (2 * K - 1)
+    } }
+  else {if(K==1){
+    aic <- disp + 2 * (length(beta) )
+    bic <- disp + log(n) * (length(beta) )
   }
+    else {
+      aic <- disp + 2 * (length(beta) + 2 * K - 1)
+      bic <- disp + log(n) * (length(beta) + 2 * K - 1)
+    }}
   loglik <- npfit$loglik
   complete.loglik <- npfit$complete.loglik
   masses <- npfit$masses
   EMconverged <- npfit$EMconverged
   yt <- ytrans(y, lambda)
-  if (K == 1){ylim<- "none"}
-  if (model=='mixed'){
-    if (K == 1){
-      predicted.re <-rep(1,n)
-      fitted.transformed <- rep(0,n)
-      x <- model.matrix(attr(mf, "terms"), data=mf)
-      for(i in 1:n){
-      fitted.transformed[i] <- x[i,]%*%beta
-      }
-    } else{
-      predicted.re <- rep(0,n)
-      fitted.transformed <- rep(0,n)
-      for(i in 1:n){
-        predicted.re[i] <- sum(w[i,]%*%z)
-        fitted.transformed[i]  <- x[i,]%*%beta + predicted.re[i]
-       }
-     }
-    fitted <- yhat(fitted.transformed, lambda = lambda)
-    residuals <- y- fitted
-    residuals.transformed <- yt - fitted.transformed
-    if (K > 1){
-      ylim <- c(min(masses[, ]), max(masses[, ]))
-      if (plot.opt == 1) {
-        graphics::plot(1:s, masses[,1], col=1, type = "l", ylim=ylim, ylab='mass points',xlab='EM iterations')
-        for(k in 2:K){
-        graphics::lines(1:s, masses[,k], type="l", lwd= 1.5,lty=1, col=k)}
-        if (verbose==T){cat("EM Trajectories plotted.\n")}
+  if (K == 1) {
+    ylim <- "none"
+  }
+  if (model == "mixed") {
+    if (K == 1) {
+      predicted.re <- rep(1, n)
+      fitted.transformed <- rep(0, n)
+      x <- model.matrix(attr(mf, "terms"), data = mf)
+      for (i in 1:n) {
+        fitted.transformed[i] <- x[i, ] %*% beta
       }
     }
-    npresult<- list("call"=call, "yt"=yt, "aic"=aic, "bic"=bic,"xx"=xnames, "Class"=y,"mform"=mform,"ylim"=ylim, "masses"=masses,
-                    "y"=y, "formula"=formula,"data"=data,"EMiteration"= s, "Disparities"=Disparities,
-                    "p"=p, "mass.point"=z, "beta"=beta, "se"=se, "sigma"=sigma,
-                    "w" =w, "loglik"= loglik, "complete.loglik" = complete.loglik,
-                    "disparity"= disp, "EMconverged" = EMconverged, "fitted" = fitted,
-                    "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
-                    "residuals"=residuals, "residuals.transformed"=residuals.transformed,
-                    "kind"=1, "model"=model)
-    class(npresult)<-"boxcoxmix"
-  } else  {
-    if (K > 1){
+    else {
+      predicted.re <- rep(0, n)
+      fitted.transformed <- rep(0, n)
+      for (i in 1:n) {
+        predicted.re[i] <- sum(w[i, ] %*% z)
+        fitted.transformed[i] <- x[i, ] %*% beta + predicted.re[i]
+      }
+    }
+    fitted <- yhat(fitted.transformed, lambda = lambda)
+    residuals <- y - fitted
+    residuals.transformed <- yt - fitted.transformed
+    if (K > 1) {
       ylim <- c(min(masses[, ]), max(masses[, ]))
       if (plot.opt == 1) {
-        graphics::plot(1:s, masses[,1], col=1, type = "l", ylim=ylim, ylab='mass points',xlab='EM iterations')
-        for(k in 2:K){
-        graphics::lines(1:s, masses[,k], type="l", lwd= 1.5,lty=1, col=k)}
-        if (verbose==T){cat("EM Trajectories plotted.\n")}
+        graphics::plot(1:s, masses[, 1], col = 1, type = "l", 
+                       ylim = ylim, ylab = "mass points", xlab = "EM iterations")
+        for (k in 2:K) {
+          graphics::lines(1:s, masses[, k], type = "l", 
+                          lwd = 1.5, lty = 1, col = k)
+        }
+        if (verbose == T) {
+          cat("EM Trajectories plotted.\n")
+        }
+      }
+    }
+    npresult <- list(call = call, yt = yt, aic = aic, bic = bic, 
+                     xx = xnames, Class = y, mform = mform, ylim = ylim, 
+                     masses = masses, y = y, formula = formula, data = data, 
+                     EMiteration = s, Disparities = Disparities, p = p, 
+                     mass.point = z, beta = beta, se = se, sigma = sigma, 
+                     w = w, loglik = loglik, complete.loglik = complete.loglik, 
+                     disparity = disp, EMconverged = EMconverged, fitted = fitted, 
+                     fitted.transformed = fitted.transformed, predicted.re = predicted.re, 
+                     residuals = residuals, residuals.transformed = residuals.transformed, 
+                     kind = 1, model = model)
+    class(npresult) <- "boxcoxmix"
+  }
+  else {
+    if (K > 1) {
+      ylim <- c(min(masses[, ]), max(masses[, ]))
+      if (plot.opt == 1) {
+        graphics::plot(1:s, masses[, 1], col = 1, type = "l", 
+                       ylim = ylim, ylab = "mass points", xlab = "EM iterations")
+        for (k in 2:K) {
+          graphics::lines(1:s, masses[, k], type = "l", 
+                          lwd = 1.5, lty = 1, col = k)
+        }
+        if (verbose == T) {
+          cat("EM Trajectories plotted.\n")
+        }
       }
     }
     fitted <- "none"
     fitted.transformed <- "none"
     predicted.re <- "none"
-    npresult<- list("call"=call, "yt"=yt, "aic"=aic, "bic"=bic,"xx"=xnames, "Class"=y,"mform"=mform,"ylim"=ylim, "masses"=masses,
-                    "y"=y, "formula"=formula,"data"=data,"EMiteration"= s, "Disparities"=Disparities,
-                    "p"=p, "mass.point"=z, "beta"=beta, "se"=se, "sigma"=sigma,
-                    "w" =w, "loglik"= loglik, "complete.loglik" = complete.loglik,
-                    "disparity"= disp, "EMconverged" = EMconverged,"fitted" = fitted,
-                    "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
-                    "residuals"=y, "residuals.transformed"=yt,
-                     "kind"=1, "model"= model)
-    class(npresult)<-"boxcoxmixpure"
+    npresult <- list(call = call, yt = yt, aic = aic, bic = bic, 
+                     xx = xnames, Class = y, mform = mform, ylim = ylim, 
+                     masses = masses, y = y, formula = formula, data = data, 
+                     EMiteration = s, Disparities = Disparities, p = p, 
+                     mass.point = z, beta = beta, se = se, sigma = sigma, 
+                     w = w, loglik = loglik, complete.loglik = complete.loglik, 
+                     disparity = disp, EMconverged = EMconverged, fitted = fitted, 
+                     fitted.transformed = fitted.transformed, predicted.re = predicted.re, 
+                     residuals = y, residuals.transformed = yt, kind = 1, 
+                     model = model)
+    class(npresult) <- "boxcoxmixpure"
   }
   return(npresult)
 }
@@ -897,51 +927,56 @@ vc.em <- function (y, x, sizes = 1, K, lambda, steps = 500, tol = 0.5,
 #' 
 # vc.boxcox 
 #' @export np.boxcoxmix
-np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
-                    steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
-                    start="gq", ...){
+np.boxcoxmix <- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
+                          steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
+                          start = "gq", ...) 
+{
   call <- match.call()
   mform <- strsplit(as.character(groups), "\\|")
   mform <- gsub(" ", "", mform)
   if (length(mform) == 1) {
-    fit <- try(np.boxcox(formula=formula, groups= groups, data=data, K=K, lambda=lambda,steps= steps, 
-                         tol = tol, start=start, EMdev.change = EMdev.change, plot.opt = plot.opt, verbose = verbose))
+    fit <- try(np.boxcox(formula = formula, groups = groups, 
+                         data = data, K = K, lambda = lambda, steps = steps, 
+                         tol = tol, start = start, EMdev.change = EMdev.change, 
+                         plot.opt = plot.opt, verbose = verbose))
     if (class(fit) == "try-error") {
       cat("Check model specification, change the number of components or specify another value of lambda or tol and try again.")
       return()
     }
   }
   else {
-    fit <- try(vc.boxcox(formula=formula, groups= groups, data=data, K=K, lambda=lambda, steps= steps,
-                         tol = tol, start=start, EMdev.change = EMdev.change, plot.opt = plot.opt, verbose = verbose))
+    fit <- try(vc.boxcox(formula = formula, groups = groups, 
+                         data = data, K = K, lambda = lambda, steps = steps, 
+                         tol = tol, start = start, EMdev.change = EMdev.change, 
+                         plot.opt = plot.opt, verbose = verbose))
     if (class(fit) == "try-error") {
       cat("Check model specification, change the number of components or specify another value of lambda or tol and try again.")
       return()
     }
   }
   W <- fit$w
-  P <-  fit$p
+  P <- fit$p
   se <- fit$se
   iter <- fit$EMiteration
-  names(P) <- paste('MASS',1:K,sep='')
+  names(P) <- paste("MASS", 1:K, sep = "")
   Z <- fit$mass.point
-  names(Z) <- paste('MASS',1:K,sep='')
+  names(Z) <- paste("MASS", 1:K, sep = "")
   Beta <- fit$beta
-  Sigma<- fit$sigma
-  aic<- fit$aic
-  bic<- fit$bic
+  Sigma <- fit$sigma
+  aic <- fit$aic
+  bic <- fit$bic
   y <- fit$y
   yt <- fit$yt
   fitted <- fit$fitted
   fitted.transformed <- fit$fitted.transformed
-  masses<- fit$masses
-  ylim<- fit$ylim
-  residuals<- fit$residuals
-  residuals.transformed<- fit$residuals.transformed
+  masses <- fit$masses
+  ylim <- fit$ylim
+  residuals <- fit$residuals
+  residuals.transformed <- fit$residuals.transformed
   predicted.re <- fit$predicted.re
-  Class<-fit$Class
+  Class <- fit$Class
   xx <- fit$xx
-  model<- fit$model
+  model <- fit$model
   Disp <- fit$disparity
   Disparities <- fit$Disparities
   Loglik <- fit$loglik
@@ -950,23 +985,30 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   EMconverged <- fit$EMconverged
   model <- fit$model
   if (model == "mixed") {
-    result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Beta, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
-                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "bic"=bic,"masses"=masses, "y"=y, "yt"=yt,
-                  "complete.loglik" = complete.loglik, 
-                  "disparity"= Disp, "EMconverged" = EMconverged, "mform"=length(mform),"ylim"=ylim, 
-                  "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
-                  "residuals"=residuals, "residuals.transformed"=residuals.transformed,"kind"=kind,
-                  "EMiteration"= iter, "xx" = xx, model= model)
-    class(result)<-"boxcoxmix"
-  }else{
-    result<- list("call"=call,  "p"=P, "mass.point"=Z, "beta"=Z, "sigma"=Sigma, "se"=se, "w" =W, "Disparities" = Disparities,
-                  "formula" = formula, "data" = data, "loglik"= Loglik, "aic"=aic, "bic"=bic, "masses"=masses, "y"=y, "yt"=yt,
-                  "complete.loglik" = complete.loglik, 
-                  "disparity"= Disp, "EMconverged" = EMconverged, "mform"=length(mform),"ylim"=ylim, 
-                  "fitted" = fitted, "Class"= Class, "fitted.transformed"= fitted.transformed, "predicted.re"= predicted.re,
-                  "residuals"=residuals, "residuals.transformed"=residuals.transformed,"kind"=kind,
-                  "EMiteration"= iter, "xx" = xx, model= model)
-    class(result)<-"boxcoxmixpure"
+    result <- list(call = call, p = P, mass.point = Z, beta = Beta, 
+                   sigma = Sigma, se = se, w = W, Disparities = Disparities, 
+                   formula = formula, data = data, loglik = Loglik, 
+                   aic = aic, bic = bic, masses = masses, y = y, yt = yt, 
+                   complete.loglik = complete.loglik, disparity = Disp, 
+                   EMconverged = EMconverged, mform = length(mform), 
+                   ylim = ylim, fitted = fitted, Class = Class, fitted.transformed = fitted.transformed, 
+                   predicted.re = predicted.re, residuals = residuals, 
+                   residuals.transformed = residuals.transformed, kind = kind, 
+                   EMiteration = iter, xx = xx, model = model)
+    class(result) <- "boxcoxmix"
+  }
+  else {
+    result <- list(call = call, p = P, mass.point = Z, beta = Z, 
+                   sigma = Sigma, se = se, w = W, Disparities = Disparities, 
+                   formula = formula, data = data, loglik = Loglik, 
+                   aic = aic, bic = bic, masses = masses, y = y, yt = yt, 
+                   complete.loglik = complete.loglik, disparity = Disp, 
+                   EMconverged = EMconverged, mform = length(mform), 
+                   ylim = ylim, fitted = fitted, Class = Class, fitted.transformed = fitted.transformed, 
+                   predicted.re = predicted.re, residuals = residuals, 
+                   residuals.transformed = residuals.transformed, kind = kind, 
+                   EMiteration = iter, xx = xx, model = model)
+    class(result) <- "boxcoxmixpure"
   }
   return(result)
 }
@@ -992,9 +1034,9 @@ np.boxcoxmix<-function(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
 #' set.
 #' @param \dots extra arguments will be ignored. 
 #' @export  
-vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
-                      steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
-                      start="gq", ...) 
+vc.boxcox <- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1, 
+                       steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, 
+                       start = "gq", ...) 
 {
   call <- match.call()
   data <- as.data.frame(data)
@@ -1010,7 +1052,7 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   mf <- model.frame(formula = formula, data = ordered)
   model <- "mixed"
   x <- model.matrix(attr(mf, "terms"), data = mf)[, -1, drop = FALSE]
-  if (dim(x)[2]== 0) {
+  if (dim(x)[2] == 0) {
     x <- model.matrix(attr(mf, "terms"), data = mf)
     model <- "pure"
   }
@@ -1032,10 +1074,10 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   vfit <- try(vc.em(y = y, x = x, sizes = sizes, K = K, lambda = lambda, 
                     steps = steps, tol = tol, start = start, EMdev.change = EMdev.change, 
                     plot.opt = plot.opt, verbose = verbose))
-   if (class(vfit) == "try-error") {
+  if (class(vfit) == "try-error") {
     cat("Check model specification, change the number of components or specify another value of lambda or tol and try again.")
     return()
-   }
+  }
   EMiter <- vfit$EMiteration
   if (K == 1) {
     w <- vfit$w
@@ -1058,13 +1100,23 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
   EMconverged <- vfit$EMconverged
   complete.loglik <- vfit$complete.loglik
   masses <- vfit$masses
-  if (model=='pure'){
-    aic<- disp+2*(2*K-1)
-    bic<-disp+log(N)*(2*K-1)
-  }else{
-    aic<- disp+2*(length(beta)+2*K-1)
-    bic<-disp+log(N)*(length(beta)+2*K-1)
+  if (model == "pure"){
+    if(K==1){
+      aic <- disp + 2 * 1
+      bic <- disp + log(N) * 1
+    }
+    else {
+      aic <- disp + 2 * (2 * K - 1)
+      bic <- disp + log(N) * (2 * K - 1)
+    } }
+  else {if(K==1){
+    aic <- disp + 2 * (length(beta))
+    bic <- disp + log(N) * (length(beta))
   }
+    else {
+      aic <- disp + 2 * (length(beta) + 2 * K - 1)
+      bic <- disp + log(N) * (length(beta) + 2 * K - 1)
+    }}
   yt <- ytrans(y, lambda)
   if (K == 1) {
     ylim <- "none"
@@ -1085,7 +1137,7 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
     if (K == 1) {
       fitted.transformed <- rep(0, N)
       x <- model.matrix(attr(mf, "terms"), data = mf)
-      for(i in 1:N){
+      for (i in 1:N) {
         fitted.transformed[i] <- x[i, ] %*% beta
       }
     }
@@ -1093,13 +1145,15 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
       predicted <- predicted[match(unique(groups), unique(groupy))]
       fitted.transformed <- matrix(0, N, 1)
       cumsize <- cumsum(sizes)
-      for(j in 1:cumsize[1]){
-        fitted.transformed[j, ] <- x[j, ] %*% beta + predicted[1]
+      for (j in 1:cumsize[1]) {
+        fitted.transformed[j, ] <- x[j, ] %*% beta + 
+          predicted[1]
       }
-      for(i in 2:r){
-      for(j in (cumsize[i - 1] + 1):cumsize[i]){
-      fitted.transformed[j, ] <- x[j, ] %*% beta + predicted[i]
-       }
+      for (i in 2:r) {
+        for (j in (cumsize[i - 1] + 1):cumsize[i]) {
+          fitted.transformed[j, ] <- x[j, ] %*% beta + 
+            predicted[i]
+        }
       }
       rownames(fitted.transformed) <- rownames(ordered)
       fitted.transformed <- fitted.transformed[match(row.names(datay), 
@@ -1111,36 +1165,41 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
     if (K > 1) {
       ylim <- c(min(masses[, ]), max(masses[, ]))
       if (plot.opt == 1) {
-        graphics::plot(1:EMiter, masses[, 1], col = 1, type = "l", 
-                       ylim = ylim, ylab = "mass points", xlab = "EM iterations")
-        for(k in 2:K){
-        graphics::lines(1:EMiter, masses[, k], type = "l", 
-                          lwd = 1.5, lty = 1, col = k)}
+        graphics::plot(1:EMiter, masses[, 1], col = 1, 
+                       type = "l", ylim = ylim, ylab = "mass points", 
+                       xlab = "EM iterations")
+        for (k in 2:K) {
+          graphics::lines(1:EMiter, masses[, k], type = "l", 
+                          lwd = 1.5, lty = 1, col = k)
+        }
         if (verbose == T) {
           cat("EM Trajectories plotted.\n")
         }
       }
     }
-    result <- list(call = call, aic = aic, bic = bic, xx = xnames, yt = yt, Disparities = Disparities,
-                   Class = sizes, mform = mform, ylim = ylim, masses = masses, 
-                   y = y, formula = formula, data = data, EMiteration = EMiter, 
+    result <- list(call = call, aic = aic, bic = bic, xx = xnames, 
+                   yt = yt, Disparities = Disparities, Class = sizes, 
+                   mform = mform, ylim = ylim, masses = masses, y = y, 
+                   formula = formula, data = data, EMiteration = EMiter, 
                    p = p, mass.point = z, beta = beta, se = se, sigma = sigma, 
                    w = w, loglik = loglik, complete.loglik = complete.loglik, 
                    disparity = disp, EMconverged = EMconverged, fitted = fitted, 
                    fitted.transformed = fitted.transformed, predicted.re = predicted.re, 
                    residuals = residuals, residuals.transformed = residuals.transformed, 
-                   kind = 1,model=model)
+                   kind = 1, model = model)
     class(result) <- "boxcoxmix"
   }
   else {
     if (K > 1) {
       ylim <- c(min(masses[, ]), max(masses[, ]))
       if (plot.opt == 1) {
-        graphics::plot(1:EMiter, masses[, 1], col = 1, type = "l", 
-                       ylim = ylim, ylab = "mass points", xlab = "EM iterations")
-        for(k in 2:K){
-        graphics::lines(1:EMiter, masses[, k], type = "l", 
-                          lwd = 1.5, lty = 1, col = k)}
+        graphics::plot(1:EMiter, masses[, 1], col = 1, 
+                       type = "l", ylim = ylim, ylab = "mass points", 
+                       xlab = "EM iterations")
+        for (k in 2:K) {
+          graphics::lines(1:EMiter, masses[, k], type = "l", 
+                          lwd = 1.5, lty = 1, col = k)
+        }
         if (verbose == T) {
           cat("EM Trajectories plotted.\n")
         }
@@ -1149,14 +1208,16 @@ vc.boxcox<- function (formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
     fitted <- "none"
     fitted.transformed <- "none"
     predicted.re <- "none"
-    result <- list(call = call, aic = aic, bic = bic, xx = xnames, yt = yt, Disparities = Disparities,
-                   Class = sizes, mform = mform, ylim = ylim, masses = masses, 
-                   y = y, formula = formula, data = data, EMiteration = EMiter, 
+    result <- list(call = call, aic = aic, bic = bic, xx = xnames, 
+                   yt = yt, Disparities = Disparities, Class = sizes, 
+                   mform = mform, ylim = ylim, masses = masses, y = y, 
+                   formula = formula, data = data, EMiteration = EMiter, 
                    p = p, mass.point = z, beta = beta, se = se, sigma = sigma, 
-                   w = w, loglik = loglik, complete.loglik = complete.loglik, fitted = fitted, 
-                   fitted.transformed = fitted.transformed, predicted.re = predicted.re,
-                   disparity = disp, EMconverged = EMconverged, residuals = y, 
-                   residuals.transformed = yt, kind = 1, model= model)
+                   w = w, loglik = loglik, complete.loglik = complete.loglik, 
+                   fitted = fitted, fitted.transformed = fitted.transformed, 
+                   predicted.re = predicted.re, disparity = disp, EMconverged = EMconverged, 
+                   residuals = y, residuals.transformed = yt, kind = 1, 
+                   model = model)
     class(result) <- "boxcoxmixpure"
   }
   return(result)

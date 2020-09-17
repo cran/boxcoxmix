@@ -2,8 +2,8 @@ Package: boxcoxmix
 Type: Package
 Title: Box-Cox-Type Transformations for Linear and Logistic Models with
         Random Effects
-Version: 0.21
-Date: 2018-9-25
+Version: 0.28
+Date: 2020-09-17
 Author: Amani Almohaimeed and Jochen Einbeck
 Maintainer: Amani Almohaimeed <amani.almohaimeed@gmail.com>
 Depends: R (>= 3.3.0)
@@ -12,12 +12,15 @@ Suggests: nlme, mdscore, flexmix, utils
 LazyLoad: yes
 Description: Box-Cox-type transformations for linear and logistic models
              with random effects using non-parametric profile maximum
-             likelihood estimation. The main functions are optim.boxcox()
-             and boxcoxtype().
+             likelihood estimation. The main functions are optim.boxcox() for 
+             linear models with random effects and boxcoxtype() for logistic models 
+             with random effects.
 License: GPL (>= 3)
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
 VignetteBuilder: utils
 NeedsCompilation: no
-Packaged: 2018-09-25 15:01:49 UTC; amanialmohaimeed
 Repository: CRAN
-Date/Publication: 2018-09-25 16:40:03 UTC
+Packaged: 2020-09-17 06:44:25 UTC; amanialmohaimeed
+Date/Publication: 2020-09-17 07:00:02 UTC

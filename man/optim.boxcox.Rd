@@ -4,9 +4,22 @@
 \alias{optim.boxcox}
 \title{Response Transformations for Random Effect and Variance Component Models}
 \usage{
-optim.boxcox(formula, groups = 1, data, K = 3, steps = 500, tol = 0.5,
-  start = "gq", EMdev.change = 1e-04, find.in.range = c(-3, 3), s = 60,
-  plot.opt = 3, verbose = FALSE, noformat = FALSE, ...)
+optim.boxcox(
+  formula,
+  groups = 1,
+  data,
+  K = 3,
+  steps = 500,
+  tol = 0.5,
+  start = "gq",
+  EMdev.change = 1e-04,
+  find.in.range = c(-3, 3),
+  s = 60,
+  plot.opt = 3,
+  verbose = FALSE,
+  noformat = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula describing the transformed response and the fixed

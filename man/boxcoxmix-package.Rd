@@ -8,11 +8,13 @@
 \description{
 Box-Cox-type transformations for linear and logistic models with
 random effects using non-parametric profile maximum likelihood
-estimation. The main functions are \code{optim.boxcox()} and \code{boxcoxtype()}.
+estimation. The main functions are \code{optim.boxcox()} for linear models with
+random effects and \code{boxcoxtype()} for logistic models with
+random effects.
 }
 \details{
 \tabular{ll}{ Package: \tab boxcoxmix\cr Type: \tab Package\cr Version: \tab
-0.21\cr Date: \tab 2018-9-25\cr License: \tab GPL (>=3)\cr }
+0.28\cr Date: \tab 2020-09-17\cr License: \tab GPL (>=3)\cr }
 }
 \references{
 Box G. and Cox D. (1964). An analysis of transformations. Journal of

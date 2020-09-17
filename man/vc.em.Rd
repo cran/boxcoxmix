@@ -18,24 +18,9 @@
 \alias{vc.theta}
 \alias{vc.mstep}
 \alias{vc.em}
-\alias{np.boxcox}
 \alias{vc.boxcox}
-\alias{np.estep}
-\alias{np.zk}
-\alias{fik}
-\alias{yhat}
-\alias{ytrans}
-\alias{np.bhat}
 \alias{nb.se}
-\alias{np.mstep}
-\alias{np.em}
-\alias{vc.estep}
-\alias{bhat}
 \alias{vc.se}
-\alias{mik}
-\alias{vc.mstep}
-\alias{gqz}
-\alias{vc.boxcox}
 \alias{gqz}
 \alias{masspoint.class}
 \title{Internal boxcoxmix functions}
@@ -56,12 +41,34 @@ np.bhat(y, x, w, z, lambda)
 
 np.mstep(y, x, beta, lambda, w)
 
-np.em(y, x, K, lambda = 1, steps = 500, tol = 0.5, start = "gq",
-  EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, ...)
+np.em(
+  y,
+  x,
+  K,
+  lambda = 1,
+  steps = 500,
+  tol = 0.5,
+  start = "gq",
+  EMdev.change = 1e-04,
+  plot.opt = 1,
+  verbose = TRUE,
+  ...
+)
 
-np.boxcox(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
-  steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE,
-  start = "gq", ...)
+np.boxcox(
+  formula,
+  groups = 1,
+  data,
+  K = 3,
+  tol = 0.5,
+  lambda = 1,
+  steps = 500,
+  EMdev.change = 1e-04,
+  plot.opt = 1,
+  verbose = TRUE,
+  start = "gq",
+  ...
+)
 
 vc.estep(Y, X, sizes = 1, lambda, p, beta, z, sigma)
 
@@ -75,12 +82,35 @@ vc.theta(Y, X, sizes, lambda, beta, z)
 
 vc.mstep(Y, X, sizes = 1, beta, lambda, w)
 
-vc.em(y, x, sizes = 1, K, lambda, steps = 500, tol = 0.5, start = "gq",
-  EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE, ...)
+vc.em(
+  y,
+  x,
+  sizes = 1,
+  K,
+  lambda,
+  steps = 500,
+  tol = 0.5,
+  start = "gq",
+  EMdev.change = 1e-04,
+  plot.opt = 1,
+  verbose = TRUE,
+  ...
+)
 
-vc.boxcox(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
-  steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE,
-  start = "gq", ...)
+vc.boxcox(
+  formula,
+  groups = 1,
+  data,
+  K = 3,
+  tol = 0.5,
+  lambda = 1,
+  steps = 500,
+  EMdev.change = 1e-04,
+  plot.opt = 1,
+  verbose = TRUE,
+  start = "gq",
+  ...
+)
 
 gqz(numnodes = 20, minweight = 1e-06)
 

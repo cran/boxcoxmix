@@ -38,7 +38,7 @@ and \\
   Department of Mathematical Sciences\\
   Durham University\\
   Durham, UK \\
-  E-mail: \email{amani.m.almohaimeed@durham.ac.uk}\\
+  E-mail: \email{ama.almohaimeed@qu.edu.sa}\\
 \\\, \\
   Jochen Einbeck\\
   Department of Mathematical Sciences\\
@@ -530,11 +530,11 @@ Oxboys$boy
 testox <- np.boxcoxmix(height ~  age, groups = Oxboys$boy,  data = Oxboys, 
                        K = 6, tol = 1, start = "gq", lambda=1, verbose=FALSE)
 @
-
-\begin{figure}
-<<fig=TRUE, eval=TRUE, echo=TRUE, fig.width=.60\textwidth>>=
+<<eval=FALSE>>=
 plot(testox, 1)
 @ 
+\begin{figure}
+\includegraphics[width=.60\textwidth]{testox.png} 
 \caption{For the Oxboys data, estimated mass points versus EM iterations.}
 \label{fig:massvc}
 \end{figure}

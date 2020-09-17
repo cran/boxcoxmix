@@ -4,10 +4,22 @@
 \alias{tolfind.boxcox}
 \title{Grid search over tol for NPPML estimation of random effect and variance component models}
 \usage{
-tolfind.boxcox(formula, groups = 1, data, K = 3, lambda = 1,
-  EMdev.change = 1e-04, plot.opt = 2, s = 15, steps = 500,
-  find.in.range = c(0, 1.5), start = "gq", verbose = FALSE,
-  noformat = FALSE, ...)
+tolfind.boxcox(
+  formula,
+  groups = 1,
+  data,
+  K = 3,
+  lambda = 1,
+  EMdev.change = 1e-04,
+  plot.opt = 2,
+  s = 15,
+  steps = 500,
+  find.in.range = c(0, 1.5),
+  start = "gq",
+  verbose = FALSE,
+  noformat = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula describing the transformed response and the fixed

@@ -5,22 +5,15 @@
 \alias{summary.boxcoxmix}
 \alias{print.boxcoxmixpure}
 \alias{summary.boxcoxmixpure}
-\alias{print.boxcoxmixpure}
-\alias{summary.boxcoxmix}
-\alias{summary.boxcoxmixpure}
 \title{Summary of boxcoxmix functions}
 \usage{
-\method{print}{boxcoxmix}(x, digits = max(3, getOption("digits") - 3),
-  na.print = "", ...)
+\method{print}{boxcoxmix}(x, digits = max(3, getOption("digits") - 3), na.print = "", ...)
 
-\method{print}{boxcoxmixpure}(x, digits = max(3, getOption("digits") - 3),
-  na.print = "", ...)
+\method{print}{boxcoxmixpure}(x, digits = max(3, getOption("digits") - 3), na.print = "", ...)
 
-\method{summary}{boxcoxmix}(object, digits = max(3, getOption("digits") - 3),
-  ...)
+\method{summary}{boxcoxmix}(object, digits = max(3, getOption("digits") - 3), ...)
 
-\method{summary}{boxcoxmixpure}(object, digits = max(3, getOption("digits") -
-  3), ...)
+\method{summary}{boxcoxmixpure}(object, digits = max(3, getOption("digits") - 3), ...)
 }
 \arguments{
 \item{x}{an object for which a summary is desired.}

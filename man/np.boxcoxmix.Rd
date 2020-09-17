@@ -4,9 +4,20 @@
 \alias{np.boxcoxmix}
 \title{Response Transformations for Random Effect and Variance Component Models}
 \usage{
-np.boxcoxmix(formula, groups = 1, data, K = 3, tol = 0.5, lambda = 1,
-  steps = 500, EMdev.change = 1e-04, plot.opt = 1, verbose = TRUE,
-  start = "gq", ...)
+np.boxcoxmix(
+  formula,
+  groups = 1,
+  data,
+  K = 3,
+  tol = 0.5,
+  lambda = 1,
+  steps = 500,
+  EMdev.change = 1e-04,
+  plot.opt = 1,
+  verbose = TRUE,
+  start = "gq",
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula describing the transformed response and the fixed

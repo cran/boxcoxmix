@@ -6,9 +6,18 @@
 \alias{binomial}
 \title{Box-Cox-type link function for logistic mixed-effects Models}
 \usage{
-boxcoxtype(formula, random = ~1, k = 3, trials = 1, data,
-  find.in.range = c(-2, 2), s = 20, plot.opt = 1,
-  random.distribution = "np", ...)
+boxcoxtype(
+  formula,
+  random = ~1,
+  k = 3,
+  trials = 1,
+  data,
+  find.in.range = c(-2, 2),
+  s = 20,
+  plot.opt = 1,
+  random.distribution = "np",
+  ...
+)
 
 boxcoxpower(Lambda = 0)
 

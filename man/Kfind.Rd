@@ -4,9 +4,20 @@
 \alias{Kfind.boxcox}
 \title{Grid search over K for NPML estimation of random effect and variance component models}
 \usage{
-Kfind.boxcox(formula, groups = 1, data, lambda = 1, EMdev.change = 1e-04,
-  steps = 500, find.k = c(2, 10), model.selection = "aic", start = "gq",
-  find.tol = c(0, 1.5), steps.tol = 15, ...)
+Kfind.boxcox(
+  formula,
+  groups = 1,
+  data,
+  lambda = 1,
+  EMdev.change = 1e-04,
+  steps = 500,
+  find.k = c(2, 10),
+  model.selection = "aic",
+  start = "gq",
+  find.tol = c(0, 1.5),
+  steps.tol = 15,
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula describing the transformed response and the fixed
