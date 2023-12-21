@@ -55,6 +55,7 @@ in step of 1.}
 \item{\dots}{extra arguments will be ignored.}
 }
 \value{
+List with class \code{boxcoxmix} containing:
 \item{MinDisparity}{the minimum disparity found.} \item{Best.K}{the
 value of \code{K} corresponding to \code{MinDisparity}.}
 \item{AllMinDisparities }{a vector containing all minimum disparities calculated on the

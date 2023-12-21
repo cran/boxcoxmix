@@ -1,26 +1,30 @@
 Package: boxcoxmix
-Type: Package
+Version: 0.42
+License: GPL (>= 3)
+Description: Box-Cox-type transformations for linear and logistic models with random effects using non-parametric profile maximum likelihood estimation, as introduced in Almohaimeed (2018) <http://etheses.dur.ac.uk/12831/> and Almohaimeed and Einbeck (2022) <doi:10.1177/1471082X20966919>. The main functions are 'optim.boxcox()' for linear models with random effects and 'boxcoxtype()' for logistic models with random effects.
 Title: Box-Cox-Type Transformations for Linear and Logistic Models with
         Random Effects
-Version: 0.28
-Date: 2020-09-17
-Author: Amani Almohaimeed and Jochen Einbeck
-Maintainer: Amani Almohaimeed <amani.almohaimeed@gmail.com>
+Authors@R: c(
+  person("Iago", "Giné-Vázquez", role = c("cre"), 
+                                 email = "iago.gin-vaz@protonmail.com", 
+                                 comment = c(ORCID = "0000-0002-6725-2638")),
+  person("Amani", "Almohaimeed", role = "aut"),
+  person("Jochen", "Einbeck", role = "aut"))
+Date: 2023-12-20
 Depends: R (>= 3.3.0)
 Imports: statmod(>= 1.4.27), qicharts(>= 0.5.4), npmlreg(>= 0.46-1)
 Suggests: nlme, mdscore, flexmix, utils
-LazyLoad: yes
-Description: Box-Cox-type transformations for linear and logistic models
-             with random effects using non-parametric profile maximum
-             likelihood estimation. The main functions are optim.boxcox() for 
-             linear models with random effects and boxcoxtype() for logistic models 
-             with random effects.
-License: GPL (>= 3)
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
+URL: https://gitlab.com/iagogv/boxcoxmix
+BugReports: https://gitlab.com/iagogv/boxcoxmix/-/issues
 VignetteBuilder: utils
 NeedsCompilation: no
+Encoding: UTF-8
+Type: Package
+RoxygenNote: 7.2.3
+Packaged: 2023-12-20 01:31:28 UTC; iago
+Author: Iago Giné-Vázquez [cre] (<https://orcid.org/0000-0002-6725-2638>),
+  Amani Almohaimeed [aut],
+  Jochen Einbeck [aut]
+Maintainer: Iago Giné-Vázquez <iago.gin-vaz@protonmail.com>
 Repository: CRAN
-Packaged: 2020-09-17 06:44:25 UTC; amanialmohaimeed
-Date/Publication: 2020-09-17 07:00:02 UTC
+Date/Publication: 2023-12-21 11:40:11 UTC

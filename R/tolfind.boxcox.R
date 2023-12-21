@@ -1,42 +1,5 @@
 ## A grid search over tol
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' Grid search over tol for NPPML estimation of random effect and variance component models
 #' 
 #' A grid search over the parameter \code{tol}, to set the initial values of
@@ -68,7 +31,9 @@
 #' @param verbose If set to FALSE, no printed output on progress.
 #' @param noformat Set \code{noformat = TRUE}, to change the formatting of the plots.
 #' @param \dots extra arguments will be ignored.
-#' @return \item{MinDisparity}{the minimum disparity found.} \item{Mintol}{the
+#' @return 
+#' List with class \code{boxcoxmix} containing:
+#' \item{MinDisparity}{the minimum disparity found.} \item{Mintol}{the
 #' value of \code{tol} corresponding to \code{MinDisparity}.}
 #' \item{AllDisparities }{a vector containing all disparities calculated on the
 #' grid.} \item{Alltol }{list of \code{tol} values used in the grid.}
@@ -106,78 +71,76 @@
 tolfind.boxcox<- function (formula, groups=1, data, K=3,  lambda=1, EMdev.change = 1e-04, plot.opt = 2, s = 15, steps=500,
                            find.in.range = c(0, 1.5), start="gq", verbose = FALSE, noformat = FALSE, ...) 
 {
-  call <- match.call()
-  if (K == 1) {
-    stop("Please choose K > 1.")
-  }
-  tol <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
-    1:s/s
-  all.Disparities <-  all.converged <- rep(0, s)
-  min.Disp <- min.Disp.conv <- 10^8
-  s.min <- step.min.conv <- 1
-  if (!noformat) {
-    if (steps > 8) 
-      graphics::par(mfrow = c(4, 4), cex = 0.5)
-    else graphics::par(mfrow = c(3, 3), cex = 0.5, cex.axis = 1.1)
-  }
-  for (t in 1:s) {
-    # tol <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
-    #   t/s
-    # tol0 <- tol
-      fit <- try(np.boxcoxmix(formula=formula, groups= groups, data=data, K=K, lambda=lambda,steps= steps, 
-                           tol = tol[t], start=start, EMdev.change = EMdev.change, 
-                           plot.opt = plot.opt, verbose = verbose))
-      if (class(fit) == "try-error") {
-        cat("boxcox.tolfind failed using tol=", tol[t], ". Hint:  specify another range of tol values and try again. ")
-        return()
-      }
-      all.Disparities[t] <-fit$disparity
-      all.converged[t] <- fit$EMconverged
-      iter <- fit$EMiteration
-    if (all.Disparities[t] < min.Disp) {
-      min.Disp <- all.Disparities[t]
-      s.min <- t
-    }
-    if (all.Disparities[t] < min.Disp.conv && all.converged[t]) {
-      min.Disp.conv <- all.Disparities[t]
-      step.min.conv <- t
-      iter <- fit$EMiteration
-    }
-  }
-  tol.min <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
-    s.min/s
-  tol.min.conv <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
-    step.min.conv/s
-  fit <- np.boxcoxmix(formula=formula, groups= groups, data=data, K=K, lambda=lambda,steps= steps, 
-                          tol = tol.min, start=start, EMdev.change = EMdev.change, 
-                          plot.opt = 0, verbose = verbose)
-  aic<- fit$aic
-  bic<- fit$bic
-  npcolors <- 2 + all.converged
-  if (plot.opt==2){
-    graphics::plot(tol, all.Disparities, type = "o", xlab = "tol", 
-                   ylab = "Disparity", col= npcolors)
-    graphics::segments(tol.min, min.Disp, tol.min, 1.1 * min.Disp, col = 4)
-  cat("Minimal Disparity:", min.Disp, "at tol=", tol.min, "\n")
-  if (max(all.converged) == 1) {
-    cat("Minimal Disparity with EM converged:", min.Disp.conv, 
-        "at tol=", tol.min.conv, "\n")
-  }
-  else {
-    cat(" No convergence achieved for any choice of tol.", 
-        "\n")
-  }
-  result <- list( "call"=call, fit=fit, aic=aic,bic=bic, MinDisparity = min.Disp.conv, Mintol = tol.min.conv, 
-                  AllDisparities = all.Disparities, Alltol = tol, 
-                  AllEMconverged = all.converged == TRUE, "EMiteration"=iter,
-                  "kind"=2, "npcolors"=npcolors, "tol.min"=tol.min, "min.Disp"=min.Disp)
-  class(result)<-"boxcoxmix"
-  }else{
-    result <- list( "call"=call, fit=fit, aic=aic, bic=bic, MinDisparity = min.Disp.conv, Mintol = tol.min.conv, 
-                    AllDisparities = all.Disparities, Alltol = tol, 
-                    AllEMconverged = all.converged == TRUE, "EMiteration"=iter,
-                    "kind"=2, "npcolors"=npcolors, "tol.min"=tol.min, "min.Disp"=min.Disp)
-    class(result)<-"boxcoxmix"
-  }
-  return(result)
+	call <- match.call()
+	if (K == 1) {
+		stop("Please choose K > 1.")
+	}
+	tol <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
+		1:s/s
+	all.Disparities <-  all.converged <- rep(0, s)
+	min.Disp <- min.Disp.conv <- 10^8
+	s.min <- step.min.conv <- 1
+	if (!noformat) {
+		oldpar <- graphics::par(no.readonly = TRUE)
+		on.exit(graphics::par(oldpar))
+		if (steps > 8) 
+			graphics::par(mfrow = c(4, 4), cex = 0.5)
+		else graphics::par(mfrow = c(3, 3), cex = 0.5, cex.axis = 1.1)
+	}
+	for (t in 1:s) {
+		# tol <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
+		#   t/s
+		# tol0 <- tol
+		message("Executing NPML estimation of random effect and variance component model for tol = ", tol[t], " in range (", find.in.range[1], ", ", find.in.range[2], "].")
+		fit <- np.boxcoxmix(formula=formula, groups= groups, data=data, K=K, lambda=lambda,steps= steps, 
+				    tol = tol[t], start=start, EMdev.change = EMdev.change, 
+				    plot.opt = plot.opt, verbose = verbose)
+		message("Step for tol = ", tol[t], ": done!")
+		all.Disparities[t] <-fit$disparity
+		all.converged[t] <- fit$EMconverged
+		iter <- fit$EMiteration
+		if (all.Disparities[t] < min.Disp) {
+			min.Disp <- all.Disparities[t]
+			s.min <- t
+		}
+		if (all.Disparities[t] < min.Disp.conv && all.converged[t]) {
+			min.Disp.conv <- all.Disparities[t]
+			step.min.conv <- t
+			iter <- fit$EMiteration
+		}
+	}
+	tol.min <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
+		s.min/s
+	tol.min.conv <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
+		step.min.conv/s
+	fit <- np.boxcoxmix(formula=formula, groups= groups, data=data, K=K, lambda=lambda,steps= steps, 
+			    tol = tol.min, start=start, EMdev.change = EMdev.change, 
+			    plot.opt = 0, verbose = verbose)
+	aic<- fit$aic
+	bic<- fit$bic
+	npcolors <- 2 + all.converged
+	if (plot.opt==2){
+		graphics::plot(tol, all.Disparities, type = "o", xlab = "tol", 
+			       ylab = "Disparity", col= npcolors)
+		graphics::segments(tol.min, min.Disp, tol.min, 1.1 * min.Disp, col = 4)
+		message("Minimal Disparity: ", min.Disp, " at tol = ", tol.min, "\n")
+		if (max(all.converged) == 1) {
+			message("Minimal Disparity with EM converged: ", min.Disp.conv, " at tol = ", tol.min.conv, "\n")
+		}
+		else {
+			message("No convergence achieved for any choice of tol.", "\n")
+		}
+		result <- list("call"=call, fit=fit, aic=aic,bic=bic, MinDisparity = min.Disp.conv, Mintol = tol.min.conv, 
+			       AllDisparities = all.Disparities, Alltol = tol, 
+			       AllEMconverged = all.converged == TRUE, "EMiteration"=iter,
+			       "kind"=2, "npcolors"=npcolors, "tol.min"=tol.min, "min.Disp"=min.Disp)
+		class(result)<-"boxcoxmix"
+	}else{
+		result <- list("call"=call, fit=fit, aic=aic, bic=bic, MinDisparity = min.Disp.conv, Mintol = tol.min.conv, 
+			       AllDisparities = all.Disparities, Alltol = tol, 
+			       AllEMconverged = all.converged == TRUE, "EMiteration"=iter,
+			       "kind"=2, "npcolors"=npcolors, "tol.min"=tol.min, "min.Disp"=min.Disp)
+		class(result)<-"boxcoxmix"
+	}
+	return(result)
 }

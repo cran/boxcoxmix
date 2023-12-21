@@ -1,40 +1,5 @@
 ## A grid search over K
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' Grid search over K for NPML estimation of random effect and variance component models
 #' @rdname Kfind 
 #' @import "npmlreg"
@@ -78,7 +43,9 @@
 #' as model selection criterion.
 #' 
 #' @param \dots extra arguments will be ignored.
-#' @return \item{MinDisparity}{the minimum disparity found.} \item{Best.K}{the
+#' @return 
+#' List with class \code{boxcoxmix} containing:
+#' \item{MinDisparity}{the minimum disparity found.} \item{Best.K}{the
 #' value of \code{K} corresponding to \code{MinDisparity}.}
 #' \item{AllMinDisparities }{a vector containing all minimum disparities calculated on the
 #' grid.} \item{AllMintol }{list of \code{tol} values used in the grid.}
@@ -110,60 +77,60 @@
 Kfind.boxcox<- function (formula, groups=1, data,  lambda=1, EMdev.change = 1e-04,  steps=500,
                          find.k = c(2, 10), model.selection = "aic", start="gq", find.tol = c(0,1.5),steps.tol = 15, ...) 
 {
-  call <- match.call()
-  lam <-lambda
-  g<-as.numeric(find.k)
-  d<-g[2]-g[1]
-    D <- 0:d
-    k <- find.k[1] + (find.k[2] - find.k[1]) * 
-      D/d
-    bic<-aic<-min.Disp<-tol.min<-rep(0, (d+1) )
-    for (t in 1:(d+1)  ) {
-    fit <- try(tolfind.boxcox(formula=formula, groups= groups, data=data, K=k[t],  lambda=lam, start=start, EMdev.change = EMdev.change,  plot.opt = 0, s = steps.tol, steps= steps, 
-                              find.in.range = find.tol,  verbose = FALSE, noformat = FALSE))
-    if (class(fit) == "try-error") {
-      cat("boxcox.tolfind failed using K=", k[t], ". Hint:  specify another range of K values and try again. ")
-      return()
-    }
-    min.Disp[t] <- fit$min.Disp
-    tol.min[t]<-fit$tol.min
-    aic[t]<-fit$aic
-    bic[t]<-fit$bic
-    }  
-  AIC<-min(aic)
-  BIC<-min(bic)
-  if(model.selection == 'bic'){
-    max.result <- which.min(bic)
-    best.K <- k[max.result]
-    md<-paste("Minimal BIC:", round(BIC,3), "at K=", best.K, "\n")
-    graphics::par(mfrow=c(1,1))
-      graphics::plot(k, bic, type = "o", xlab = "K", 
-                     ylab = "BIC", col= "green", main=md)
-      plims <- graphics::par("usr")
-      y0 <- plims[3]
-      graphics::segments(best.K, y0, best.K, BIC, lty = 2,col="red", lwd = 2)
-      cat("Minimal BIC:", BIC, "at K=", best.K, "\n")
-    result <- list( "call"=call, AllMinDisparities = min.Disp, AllMintol = tol.min, 
-                    Best.K =best.K, All.K = k,  md=md, Allbic=bic,
-                    MinBIC =BIC, Allaic=aic,
-                    MinAIC =AIC,"kind"=4,"mselect"=2)
-    class(result)<-"boxcoxmix"
-  }else{
-  max.result <- which.min(aic)
-  best.K <- k[max.result]
-  md<-paste("Minimal AIC:", round(AIC,3), "at K=", best.K, "\n")
-  graphics::par(mfrow=c(1,1))
-    graphics::plot(k, aic, type = "o", xlab = "K", 
-                   ylab = "AIC", col= "green", main=md)
-    plims <- graphics::par("usr")
-    y0 <- plims[3]
-    graphics::segments(best.K, y0, best.K, AIC, lty = 2,col="red", lwd =2)
-    cat("Minimal AIC:", AIC, "at K=", best.K, "\n")
-  result <- list( "call"=call, AllMinDisparities = min.Disp, AllMintol = tol.min, 
-                  Best.K =best.K, All.K = k,  md=md, Allaic=aic,
-                  MinAIC =AIC, Allbic=bic,
-                  MinBIC =BIC, "kind"=4,"mselect"=1)
-  class(result)<-"boxcoxmix"
-  }
-  return(result)
+	call <- match.call()
+	lam <- lambda
+	g <- as.numeric(find.k)
+	d <- g[2] - g[1]
+	D <- 0:d
+	k <- find.k[1] + (find.k[2] - find.k[1]) * 
+		D/d
+	bic <- aic <- min.Disp <- tol.min <- rep(0, (d+1))
+	for(t in 1:(d+1)){
+		message("Executing grid search over tol for NPML estimation of random effect and variance component model for K = ", k[t], " in range ", find.k[1], "; ", find.k[2], ".")
+		fit <- tolfind.boxcox(formula=formula, groups= groups, data=data, K=k[t],  lambda=lam, start=start, EMdev.change = EMdev.change,  plot.opt = 0, s = steps.tol, steps= steps, 
+				      find.in.range = find.tol,  verbose = FALSE, noformat = FALSE)
+		message("Step for K = ", k[t], ": done!")
+		min.Disp[t] <- fit$min.Disp
+		tol.min[t] <- fit$tol.min
+		aic[t] <- fit$aic
+		bic[t] <- fit$bic
+	}  
+	AIC <- min(aic)
+	BIC <- min(bic)
+	oldpar <- graphics::par(no.readonly = TRUE)
+	on.exit(graphics::par(oldpar))
+	if(model.selection == 'bic'){
+		max.result <- which.min(bic)
+		best.K <- k[max.result]
+		md <- paste("Minimal BIC:", round(BIC,3), "at K=", best.K, "\n")
+		graphics::par(mfrow=c(1,1))
+		graphics::plot(k, bic, type = "o", xlab = "K", 
+			       ylab = "BIC", col= "green", main=md)
+		plims <- graphics::par("usr")
+		y0 <- plims[3]
+		graphics::segments(best.K, y0, best.K, BIC, lty = 2,col="red", lwd = 2)
+		message("Minimal BIC: ", BIC, " at K = ", best.K, "\n")
+		result <- list("call"= call, AllMinDisparities = min.Disp, AllMintol = tol.min, 
+			       Best.K = best.K, All.K = k,  md = md, Allbic = bic,
+			       MinBIC = BIC, Allaic = aic,
+			       MinAIC = AIC,"kind" = 4, "mselect" = 2)
+		class(result)<-"boxcoxmix"
+	}else{
+		max.result <- which.min(aic)
+		best.K <- k[max.result]
+		md <- paste("Minimal AIC:", round(AIC,3), "at K=", best.K, "\n")
+		graphics::par(mfrow=c(1,1))
+		graphics::plot(k, aic, type = "o", xlab = "K", 
+			       ylab = "AIC", col= "green", main=md)
+		plims <- graphics::par("usr")
+		y0 <- plims[3]
+		graphics::segments(best.K, y0, best.K, AIC, lty = 2,col="red", lwd =2)
+		message("Minimal AIC: ", AIC, "at K = ", best.K, "\n")
+		result <- list("call"=call, AllMinDisparities = min.Disp, AllMintol = tol.min, 
+			       Best.K =best.K, All.K = k,  md=md, Allaic=aic,
+			       MinAIC =AIC, Allbic=bic,
+			       MinBIC =BIC, "kind"=4,"mselect"=1)
+		class(result)<-"boxcoxmix"
+	}
+	return(result)
 }

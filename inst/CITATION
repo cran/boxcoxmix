@@ -1,0 +1,23 @@
+## R package reference generated from DESCRIPTION metadata
+citation(auto = meta)
+
+## Almohaimeed thesis
+bibentry(bibtype = "PhdThesis",
+         title = "Box–Cox–type Transformations for Linear and Logistic Models with Random Effects",
+         author = c(person("Amani", "Almohaimeed")),
+         year = "2018",
+         school = "Durham University", 
+         url = "http://etheses.dur.ac.uk/12831/")
+
+
+
+## Almohaimeed and Einbeck (2022)
+bibentry(bibtype = "Article",
+         title = "Response transformations for random effect and variance component models",
+         author = c(person("Amani", "Almohaimeed"), person("Jochen", "Einbeck")),
+         journal = "Statistical Modelling",
+         volume = 22,
+         number = 4,
+         pages = "297-236",
+         year = "2022",
+         doi = "10.1177/1471082X20966919")

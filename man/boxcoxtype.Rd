@@ -55,6 +55,7 @@ if \code{plot.opt=0}, no plot is printed.}
 \item{link}{the link function to be used.}
 }
 \value{
+List with class \code{boxcoxmix} containing:
 \item{Maximum}{the best estimate of \code{Lambda} found.} \item{objective}{the value of the profile
 log-likelihood corresponding to Maximum.} 
 \item{coef}{the vector of coefficients.} 

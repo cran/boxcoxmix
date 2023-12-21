@@ -59,6 +59,7 @@ set.}
 \item{\dots}{extra arguments will be ignored.}
 }
 \value{
+List with class \code{boxcoxmix} containing:
 \item{MinDisparity}{the minimum disparity found.} \item{Mintol}{the
 value of \code{tol} corresponding to \code{MinDisparity}.}
 \item{AllDisparities }{a vector containing all disparities calculated on the

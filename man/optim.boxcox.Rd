@@ -59,6 +59,7 @@ Use \code{plot.opt=0}, to only plot the profile log-likelihood against \code{lam
 \item{\dots}{extra arguments will be ignored.}
 }
 \value{
+List with class \code{boxcoxmix} containing:
 \item{All.lambda}{list of \code{lambda} values used in the grid.}
 \item{Maximum}{the best estimate of \code{lambda} found.} \item{objective}{the value of the profile
 log-likelihood corresponding to Maximum.} 

@@ -26,10 +26,10 @@
 
 \item{object}{an object for which a summary is desired.}
 }
+\value{
+Return invisibly the main object provided, while print a summary of its content.
+}
 \description{
 \code{summary()} and \code{print()} are generic functions used to produce the results of the functions:
 \code{np.boxcoxmix()}, \code{optim.boxcox()} and \code{tolfind.boxcox()}.
-}
-\details{
-Summary of boxcoxmix functions
 }

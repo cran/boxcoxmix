@@ -53,6 +53,7 @@ set.}
 \item{\dots}{extra arguments will be ignored.}
 }
 \value{
+List with class being either \code{boxcoxmix} or \code{boxcoxmixpure} containing:
 \item{mass.point}{the fitted mass points.} \item{p}{the masses corresponding to the mixing proportions.} \item{beta}{the
 vector of coefficients.} \item{sigma}{the standard deviation of the mixing distribution (the square root of the variance).} \item{se}{the standard error of the estimate.}
 \item{w}{a matrix of posterior probabilities that element i comes from cluster k.}

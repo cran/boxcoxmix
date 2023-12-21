@@ -51,7 +51,8 @@
 #' @param plot.opt Set \code{plot.opt=1}, to plot the profile log-likelihood against \code{Lambda}.
 #' if \code{plot.opt=0}, no plot is printed.
 #' @param \dots extra arguments will be ignored.
-#' @return 
+#' @return
+#' List with class \code{boxcoxmix} containing:
 #' \item{Maximum}{the best estimate of \code{Lambda} found.} \item{objective}{the value of the profile
 #' log-likelihood corresponding to Maximum.} 
 #' \item{coef}{the vector of coefficients.} 
@@ -98,65 +99,65 @@
 #' 
 #' @export 
 boxcoxtype <- function(formula,random = ~1, k=3,trials=1, data,find.in.range = c(-2,2), s = 20, plot.opt=1,random.distribution='np',...) {
-  call <- match.call()
-  N <- NROW(data)
-  weights= rep(trials, N)
-  data$weights <- weights
-  S <- 0:s
-  lam <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
-    S/s
-  loglik <- rep(0, s+1 )
-  #if (plot.opt==1){graphics::par(mfrow=c(1,1))}
-  mform <- strsplit(as.character(random)[2], "\\|")[[1]]
-  mform <- gsub(" ", "", mform)
-  for (t in 1:(s+1) ) {
-    if (length(mform) == 1) {
-    fit <- try(alldist( formula = formula,random = formula(random), k=k,weights = weights,data = data, family=binomial(link=boxcoxpower(lam[t])),
-                        verbose=FALSE, plot.opt = 0))
-    if (class(fit) == "try-error") {
-      cat("boxcoxtype failed using lambda=", lam[t], ". Hint:  specify another range of lambda values and try again.")
-      return()
-    }
-    loglik[t] <- -1/2*(fit$disparity)
-    }else {
-      fit <- try(allvc( formula = formula,random = formula(random), k=k,weights = weights,data = data, family=binomial(link=boxcoxpower(lam[t])),
-                          verbose=FALSE, plot.opt = 0))
-      if (class(fit) == "try-error") {
-        cat("boxcoxtype failed using lambda=", lam[t], ". Hint:  specify another range of lambda values and try again.")
-        return()
-      }
-      loglik[t] <- -1/2*(fit$disparity)
-    }
-  }
-  max.result <- which.max(loglik)
-  maxloglik<-max(loglik)
-  lambda.max <- lam[max.result]
-  if (length(mform) == 1) {
-  fit <- alldist(formula =formula,random = formula(random), k=k, weights=weights, data = data,
-                 family=binomial(link=boxcoxpower(lambda.max )), verbose=FALSE, random.distribution = random.distribution, plot.opt = 0)
-  }else {fit <- allvc(formula =formula,random = formula(random), k=k, weights=weights, data = data,
-                        family=binomial(link=boxcoxpower(lambda.max )), verbose=FALSE, random.distribution = random.distribution, plot.opt = 0)
-  }
-  if(k==1){coef<-fit$coefficients
-  }else{
-    coef<-fit$coefficients[1:abs(length(fit$coefficients)-length(fit$mass.points))]}
-  ylim1 = range(loglik, maxloglik)
-  ml <- paste("Maximum profile log-likelihood:",round(maxloglik) , "at lambda=", lambda.max, "\n")
-  if (plot.opt==1){
-    graphics::plot(lam, loglik, type = "l", xlab = expression(lambda), 
-                   ylab = "Profile log-likelihood", ylim = ylim1,col="green", main=ml)
-    plims <- graphics::par("usr")
-    y0 <- plims[3]
-    graphics::segments(lambda.max, y0, lambda.max, maxloglik, lty = 1,col="red")
-    cat("Maximum Profile Log-likelihood:", maxloglik, "at lambda=", 
-        lambda.max, "\n")
-  }
-  aic<- fit$disparity+2*(length(coef)+2*k)
-  bic<-fit$disparity+log(N)*(length(coef)+2*k)
-  result <- list(coef=coef,fit=fit, All.lam=lam, profile.loglik = loglik, lastfit = list(fit), objective = maxloglik,
-                 Maximum = lambda.max,y0=y0,ml=ml, "kind"=5, ylim1=ylim1, aic = aic, bic = bic)
-  class(result)<-"boxcoxmix"
-  return(result)
+	call <- match.call()
+	N <- NROW(data)
+	weights= rep(trials, N)
+	data$weights <- weights
+	S <- 0:s
+	lam <- find.in.range[1] + (find.in.range[2] - find.in.range[1]) * 
+		S/s
+	loglik <- rep(0, s+1 )
+	#if (plot.opt==1){graphics::par(mfrow=c(1,1))}
+	mform <- strsplit(as.character(random)[2], "\\|")[[1]]
+	mform <- gsub(" ", "", mform)
+	for (t in 1:(s+1)) {
+		if (length(mform) == 1) {
+			message("Executing NPML estimation of random effect model accounting for overdispersion for lambda = ", lam[t], " in range ", find.in.range[1], "; ", find.in.range[2], ".")
+			fit <- alldist(formula = formula,random = formula(random), k=k,weights = weights,data = data, family=binomial(link=boxcoxpower(lam[t])),
+				       verbose=FALSE, plot.opt = 0)
+			message("Step for lambda = ", lam[t], ": done!")
+			loglik[t] <- -1/2*(fit$disparity)
+		}else {
+			message("Executing NPML estimation of random effect variance component model for lambda = ", lam[t], " in range ", find.in.range[1], "; ", find.in.range[2], ".")
+			fit <- allvc(formula = formula,random = formula(random), k=k,weights = weights,data = data, family=binomial(link=boxcoxpower(lam[t])),
+				     verbose=FALSE, plot.opt = 0)
+			message("Step for lambda = ", lam[t], ": done!")
+			loglik[t] <- -1/2*(fit$disparity)
+		}
+	}
+	max.result <- which.max(loglik)
+	maxloglik<-max(loglik)
+	lambda.max <- lam[max.result]
+	if(length(mform) == 1){
+		fit <- alldist(formula = formula,random = formula(random), k=k, weights=weights, data = data, 
+			       family = binomial(link=boxcoxpower(lambda.max )), verbose=FALSE, random.distribution = random.distribution, plot.opt = 0)
+	}else{
+		fit <- allvc(formula =formula,random = formula(random), k=k, weights=weights, data = data,
+			     family=binomial(link=boxcoxpower(lambda.max )), verbose=FALSE, random.distribution = random.distribution, plot.opt = 0)
+	}
+	if(k==1){
+		coef<-fit$coefficients
+	}else{
+		coef<-fit$coefficients[1:abs(length(fit$coefficients)-length(fit$mass.points))]
+	}
+	ylim1 = range(loglik, maxloglik)
+	ml <- paste("Maximum profile log-likelihood:",round(maxloglik) , "at lambda=", lambda.max, "\n")
+	if (plot.opt==1){
+		oldpar <- graphics::par(no.readonly = TRUE)
+		on.exit(graphics::par(oldpar))
+		graphics::plot(lam, loglik, type = "l", xlab = expression(lambda), 
+			       ylab = "Profile log-likelihood", ylim = ylim1,col="green", main=ml)
+		plims <- graphics::par("usr")
+		y0 <- plims[3]
+		graphics::segments(lambda.max, y0, lambda.max, maxloglik, lty = 1,col="red")
+		message("Maximum Profile Log-likelihood: ", maxloglik, " at lambda = ", lambda.max, "\n")
+	}
+	aic<- fit$disparity+2*(length(coef)+2*k)
+	bic<-fit$disparity+log(N)*(length(coef)+2*k)
+	result <- list(coef=coef,fit=fit, All.lam=lam, profile.loglik = loglik, lastfit = list(fit), objective = maxloglik,
+		       Maximum = lambda.max,y0=y0,ml=ml, "kind"=5, ylim1=ylim1, aic = aic, bic = bic)
+	class(result)<-"boxcoxmix"
+	return(result)
 }
 
 ### Here's the Box-Cox Transformation is applied to the logistic model as a link function:
@@ -165,20 +166,20 @@ boxcoxtype <- function(formula,random = ~1, k=3,trials=1, data,find.in.range = c
 #' @export
 boxcoxpower <- function(Lambda=0)
 {
-  linkfun <- function(mu){   if(Lambda==0) log(mu/(1-mu)) 
-    else  (((mu/(1-mu))^Lambda)-1)/Lambda}
-  linkinv <- function(eta) {  if(Lambda==0)  plogis(eta) 
-    else (((1+Lambda*eta)^(-1/Lambda))+1)^(-1)}
-  mu.eta<- function(eta) { if(Lambda==0)  ifelse(abs(eta)>30,.Machine$double.eps,
-                                              exp(eta)/(1+exp(eta))^2) else
-                                                pmax(((1+Lambda*eta)^((1/Lambda)-1))/((1+Lambda*eta)^(1/Lambda)+1)^2, 
-                                                     .Machine$double.eps)}
-  valideta <- function(eta) TRUE
-  link <-paste("boxcoxpower(",Lambda,")", sep="")
-  structure(list(linkfun = linkfun, linkinv = linkinv,
-                 mu.eta = mu.eta, valideta = valideta, 
-                 name = link),
-            class = "link-glm")
+	linkfun <- function(mu){   if(Lambda==0) log(mu/(1-mu)) 
+	else  (((mu/(1-mu))^Lambda)-1)/Lambda}
+	linkinv <- function(eta) {  if(Lambda==0)  plogis(eta) 
+	else (((1+Lambda*eta)^(-1/Lambda))+1)^(-1)}
+	mu.eta<- function(eta) { if(Lambda==0)  ifelse(abs(eta)>30,.Machine$double.eps,
+						       exp(eta)/(1+exp(eta))^2) else
+							       pmax(((1+Lambda*eta)^((1/Lambda)-1))/((1+Lambda*eta)^(1/Lambda)+1)^2, 
+								    .Machine$double.eps)}
+	valideta <- function(eta) TRUE
+	link <-paste("boxcoxpower(",Lambda,")", sep="")
+	structure(list(linkfun = linkfun, linkinv = linkinv,
+		       mu.eta = mu.eta, valideta = valideta, 
+		       name = link),
+		  class = "link-glm")
 }
 
 
@@ -191,102 +192,104 @@ boxcoxpower <- function(Lambda=0)
 #' @export
 binomial <- function (link = boxcoxpower(0))
 {
-  linktemp <- substitute(link)
-  if (!is.character(linktemp)) linktemp <- deparse(linktemp)
-  okLinks <- c("logit", "probit", "cloglog", "cauchit", "log", "boxcoxpower")
-  if (linktemp %in% okLinks)
-    stats <- make.link(linktemp)
-  else if (is.character(link)) {
-    stats <- make.link(link)
-    linktemp <- link
-  } else {
-    ## what else shall we allow?  At least objects of class link-glm.
-    if(inherits(link, "link-glm")) {
-      stats <- link
-      if(!is.null(stats$name)) linktemp <- stats$name
-    } else {
-      stop(gettextf('link "%s" not available for binomial family; available links are %s',
-                    linktemp, paste(sQuote(okLinks), collapse =", ")),
-           domain = NA)
-    }
-  }
-  variance <- function(mu) mu * (1 - mu)
-  validmu <- function(mu) all(is.finite(mu)) && all(mu>0 &mu<1)
-  dev.resids <- stats::binomial()$dev.resids #function(y, mu, wt) .Call(stats:::C_binomial_dev_resids, y, mu, wt)
-  #partialAIC <- function(y, n, mu, wt, dev)NA
-  #finalAIC <- function(paic, n, dev)NA
-  aic <- function(y, n, mu, wt, dev) {
-    m <- if(any(n > 1)) n else wt
-    -2*sum(ifelse(m > 0, (wt/m), 0)*
-             dbinom(round(m*y), round(m), mu, log=TRUE))
-  }
-  initialize <- expression({
-    if (NCOL(y) == 1) {
-      ## allow factors as responses
-      ## added BDR 29/5/98
-      if (is.factor(y)) y <- y != levels(y)[1L]
-      n <- rep.int(1, nobs)
-      ## anything, e.g. NA/NaN, for cases with zero weight is OK.
-      y[weights == 0] <- 0
-      if (any(y < 0 | y > 1))
-        stop("y values must be 0 <= y <= 1")
-      mustart <- (weights * y + 0.5)/(weights + 1)
-      m <- weights * y
-      if(any(abs(m - round(m)) > 1e-3))
-        warning("non-integer #successes in a binomial glm!")
-    }
-    else if (NCOL(y) == 2) {
-      if(any(abs(y - round(y)) > 1e-3))
-        warning("non-integer counts in a binomial glm!")
-      n <- y[, 1] + y[, 2]
-      y <- ifelse(n == 0, 0, y[, 1]/n)
-      weights <- weights * n
-      mustart <- (n * y + 0.5)/(n + 1)
-    }
-    else stop("for the 'binomial' family, y must be a vector of 0 and 1\'s\nor a 2 column 
-              matrix where col 1 is no. successes and col 2 is no. failures")
-  })
-  simfun <- function(object, nsim) {
-    ftd <- fitted(object)
-    n <- length(ftd)
-    ntot <- n*nsim
-    wts <- object$prior.weights
-    if (any(wts %% 1 != 0))
-      stop("cannot simulate from non-integer prior.weights")
-    ## Try to fathom out if the original data were
-    ## proportions, a factor or a two-column matrix
-    if (!is.null(m <- object$model)) {
-      y <- model.response(m)
-      if(is.factor(y)) {
-        ## ignote weights
-        yy <- factor(1+rbinom(ntot, size = 1, prob = ftd),
-                     labels = levels(y))
-        split(yy, rep(seq_len(nsim), each = n))
-      } else if(is.matrix(y) && ncol(y) == 2) {
-        yy <- vector("list", nsim)
-        for (i in seq_len(nsim)) {
-          Y <- rbinom(n, size = wts, prob = ftd)
-          YY <- cbind(Y, wts - Y)
-          colnames(YY) <- colnames(y)
-          yy[[i]] <- YY
-        }
-        yy
-      } else
-        rbinom(ntot, size = wts, prob = ftd)/wts
-    } else rbinom(ntot, size = wts, prob = ftd)/wts
-  }
-  structure(list(family = "binomial",
-                 link = linktemp,
-                 linkfun = stats$linkfun,
-                 linkinv = stats$linkinv,
-                 variance = variance,
-                 dev.resids = dev.resids,
-                 aic = aic,
-                 mu.eta = stats$mu.eta,
-                 initialize = initialize,
-                 validmu = validmu,
-                 valideta = stats$valideta,
-                 simulate = simfun),
-            class = "family")
+	linktemp <- substitute(link)
+	if (!is.character(linktemp)) linktemp <- deparse(linktemp)
+	okLinks <- c("logit", "probit", "cloglog", "cauchit", "log", "boxcoxpower")
+	if (linktemp %in% okLinks)
+		stats <- make.link(linktemp)
+	else if (is.character(link)) {
+		stats <- make.link(link)
+		linktemp <- link
+	} else {
+		## what else shall we allow?  At least objects of class link-glm.
+		if(inherits(link, "link-glm")) {
+			stats <- link
+			if(!is.null(stats$name)) linktemp <- stats$name
+		} else {
+			stop(gettextf('link "%s" not available for binomial family; available links are %s',
+				      linktemp, paste(sQuote(okLinks), collapse =", ")),
+			     domain = NA)
+		}
+	}
+	variance <- function(mu) mu * (1 - mu)
+	validmu <- function(mu) all(is.finite(mu)) && all(mu>0 &mu<1)
+	dev.resids <- stats::binomial()$dev.resids #function(y, mu, wt) .Call(stats:::C_binomial_dev_resids, y, mu, wt)
+	#partialAIC <- function(y, n, mu, wt, dev)NA
+	#finalAIC <- function(paic, n, dev)NA
+	aic <- function(y, n, mu, wt, dev) {
+		m <- if(any(n > 1)) n else wt
+		-2*sum(ifelse(m > 0, (wt/m), 0)*
+		       dbinom(round(m*y), round(m), mu, log=TRUE))
+	}
+	initialize <- expression({
+					 if (NCOL(y) == 1) {
+						 ## allow factors as responses
+						 ## added BDR 29/5/98
+						 if (is.factor(y)) y <- y != levels(y)[1L]
+						 n <- rep.int(1, nobs)
+						 ## anything, e.g. NA/NaN, for cases with zero weight is OK.
+						 y[weights == 0] <- 0
+						 if (any(y < 0 | y > 1))
+							 stop("y values must be 0 <= y <= 1")
+						 mustart <- (weights * y + 0.5)/(weights + 1)
+						 m <- weights * y
+						 if(any(abs(m - round(m)) > 1e-3))
+							 warning("non-integer #successes in a binomial glm!")
+					 }
+					 else if (NCOL(y) == 2) {
+						 if(any(abs(y - round(y)) > 1e-3))
+							 warning("non-integer counts in a binomial glm!")
+						 n <- y[, 1] + y[, 2]
+						 y <- ifelse(n == 0, 0, y[, 1]/n)
+						 weights <- weights * n
+						 mustart <- (n * y + 0.5)/(n + 1)
+					 }
+					 else 
+						 stop("for the 'binomial' family, y must be a vector of 0 and 1\'s\nor a 2 column 
+						   matrix where col 1 is no. successes and col 2 is no. failures")
+	})
+						 
+	simfun <- function(object, nsim){
+		ftd <- fitted(object)
+		n <- length(ftd)
+		ntot <- n*nsim
+		wts <- object$prior.weights
+		if (any(wts %% 1 != 0))
+			stop("cannot simulate from non-integer prior.weights")
+		## Try to fathom out if the original data were
+		## proportions, a factor or a two-column matrix
+		if (!is.null(m <- object$model)) {
+			y <- model.response(m)
+			if(is.factor(y)) {
+				## ignote weights
+				yy <- factor(1+rbinom(ntot, size = 1, prob = ftd),
+					     labels = levels(y))
+				split(yy, rep(seq_len(nsim), each = n))
+			} else if(is.matrix(y) && ncol(y) == 2) {
+				yy <- vector("list", nsim)
+				for (i in seq_len(nsim)) {
+					Y <- rbinom(n, size = wts, prob = ftd)
+					YY <- cbind(Y, wts - Y)
+					colnames(YY) <- colnames(y)
+					yy[[i]] <- YY
+				}
+				yy
+			} else
+				rbinom(ntot, size = wts, prob = ftd)/wts
+		} else rbinom(ntot, size = wts, prob = ftd)/wts
+	}
+	structure(list(family = "binomial",
+		       link = linktemp,
+		       linkfun = stats$linkfun,
+		       linkinv = stats$linkinv,
+		       variance = variance,
+		       dev.resids = dev.resids,
+		       aic = aic,
+		       mu.eta = stats$mu.eta,
+		       initialize = initialize,
+		       validmu = validmu,
+		       valideta = stats$valideta,
+		       simulate = simfun),
+		  class = "family")
   }
 
