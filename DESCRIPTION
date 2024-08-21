@@ -1,5 +1,5 @@
 Package: boxcoxmix
-Version: 0.42
+Version: 0.46
 License: GPL (>= 3)
 Description: Box-Cox-type transformations for linear and logistic models with random effects using non-parametric profile maximum likelihood estimation, as introduced in Almohaimeed (2018) <http://etheses.dur.ac.uk/12831/> and Almohaimeed and Einbeck (2022) <doi:10.1177/1471082X20966919>. The main functions are 'optim.boxcox()' for linear models with random effects and 'boxcoxtype()' for logistic models with random effects.
 Title: Box-Cox-Type Transformations for Linear and Logistic Models with
@@ -8,10 +8,14 @@ Authors@R: c(
   person("Iago", "Giné-Vázquez", role = c("cre"), 
                                  email = "iago.gin-vaz@protonmail.com", 
                                  comment = c(ORCID = "0000-0002-6725-2638")),
-  person("Amani", "Almohaimeed", role = "aut"),
-  person("Jochen", "Einbeck", role = "aut"))
-Date: 2023-12-20
-Depends: R (>= 3.3.0)
+  person("Amani", "Almohaimeed", role = "aut",
+                                 email = "ama.almohaimeed@qu.edu.sa",
+                                 comment = c(ORCID = "0000-0002-3205-0921")),
+  person("Jochen", "Einbeck", role = "aut",
+                              email = "jochen.einbeck@durham.ac.uk",
+                              comment = c(ORCID = "0000-0002-9457-2020")))
+Date: 2024-08-20
+Depends: R (>= 4.1.0)
 Imports: statmod(>= 1.4.27), qicharts(>= 0.5.4), npmlreg(>= 0.46-1)
 Suggests: nlme, mdscore, flexmix, utils
 URL: https://gitlab.com/iagogv/boxcoxmix
@@ -20,11 +24,11 @@ VignetteBuilder: utils
 NeedsCompilation: no
 Encoding: UTF-8
 Type: Package
-RoxygenNote: 7.2.3
-Packaged: 2023-12-20 01:31:28 UTC; iago
+RoxygenNote: 7.3.2
+Packaged: 2024-08-20 14:37:56 UTC; iago
 Author: Iago Giné-Vázquez [cre] (<https://orcid.org/0000-0002-6725-2638>),
-  Amani Almohaimeed [aut],
-  Jochen Einbeck [aut]
+  Amani Almohaimeed [aut] (<https://orcid.org/0000-0002-3205-0921>),
+  Jochen Einbeck [aut] (<https://orcid.org/0000-0002-9457-2020>)
 Maintainer: Iago Giné-Vázquez <iago.gin-vaz@protonmail.com>
 Repository: CRAN
-Date/Publication: 2023-12-21 11:40:11 UTC
+Date/Publication: 2024-08-21 03:30:02 UTC

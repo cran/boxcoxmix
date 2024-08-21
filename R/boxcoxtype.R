@@ -21,8 +21,8 @@
 #' masses (Aitkin et al., 2009). An Expectation-Maximization (EM) algorithm is
 #' used for fitting the finite mixture distribution, one needs to specify the
 #' number of components \code{k} of the finite mixture in advance.
-#' This algorithm can be implemented using the npmlreg function \code{\link{alldist}}
-#' for the logistic-type overdispersion model and the npmlreg function \code{\link{allvc}} for the 
+#' This algorithm can be implemented using the npmlreg function \code{\link[npmlreg]{alldist}}
+#' for the logistic-type overdispersion model and the npmlreg function \code{\link[npmlreg]{allvc}} for the 
 #' two-level logistic-type model, setting \code{family = binomial(link = boxcoxpower(Lambda))} where 
 #' \code{Lambda} is the value of the power transformation. When \code{k}=1, the npmlreg function \code{alldist()} 
 #' fits the logistic regression model without random effects. 

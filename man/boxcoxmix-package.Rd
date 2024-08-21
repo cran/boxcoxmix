@@ -30,11 +30,23 @@ models. R package version 0.46-1.
 R Core Team (2016). R: A language and environment for
 statistical computing. R Foundation for Statistical Computing,
 Vienna, Austria. URL https://www.R-project.org/.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://gitlab.com/iagogv/boxcoxmix}
+  \item Report bugs at \url{https://gitlab.com/iagogv/boxcoxmix/-/issues}
+}
 
-
-Maintainer: Amani Almohaimeed <amani.almohaimeed@gmail.com>
 }
 \author{
-Amani Almohaimeed and Jochen Einbeck
+\strong{Maintainer}: Iago Giné-Vázquez \email{iago.gin-vaz@protonmail.com} (\href{https://orcid.org/0000-0002-6725-2638}{ORCID})
+
+Authors:
+\itemize{
+  \item Amani Almohaimeed \email{ama.almohaimeed@qu.edu.sa} (\href{https://orcid.org/0000-0002-3205-0921}{ORCID})
+  \item Jochen Einbeck \email{jochen.einbeck@durham.ac.uk} (\href{https://orcid.org/0000-0002-9457-2020}{ORCID})
+}
+
 }
 \keyword{package}

@@ -54,6 +54,10 @@ and \\
 %\VignetteIndexEntry{boxcoxmix: An R Package for Response Transformations for Random Effect and Variance Component Models}
 %\VignetteDepends{stats, graphics, tools, utils}
 
+<<echo=FALSE>>=
+options(width=60)
+@ 
+
 \section{Introduction}
 In regression analysis, the data needs to achieve normality and homoscedasticity of the response distribution in order to enable access to linear model theory and 
 associated inferential tools such as confidence intervals and hypothesis tests.
@@ -284,6 +288,7 @@ From the resulting estimates of this cycle, one gets an updated value of the wei
 
 
 
+\sloppy
 
 \subsection{Generic functions}
 \pkg{boxcoxmix} supports generic functions such as \code{summary()}, \code{print()} and  \code{plot()}. Specifically, \code{plot()}
@@ -305,6 +310,7 @@ The plots to be printed depend on the choice of the argument \code{plot.opt}, \\
 \end{itemize}
 %Other generic functions for \pkg{boxcoxmix} are \code{summary()} and \code{print()} that print output summaries of fitted models.\\
 
+\fussy
 
 \subsection{Application to the strength data}
 In this section we analyze the \textbf{strength} data from the \textbf{\textsf{R}} library \pkg{mdscore} \citep{daSilva2014} which is a 
@@ -334,7 +340,8 @@ Using \code{np.boxcoxmix()},
 library(boxcoxmix)
 data(strength, package="mdscore")
 test.inv <- np.boxcoxmix(y ~ cut *lot, data = strength, K = 3,  
-                         tol = 1.8,  start = "gq", lambda = -1, verbose=FALSE) 
+                         tol = 1.8,  start = "gq", lambda = -1,
+                         verbose=FALSE) 
 test.inv
 @
 
@@ -343,7 +350,8 @@ For comparison, we also fit the same model without transformation, using functio
 
 <<>>=
 test.gauss <- np.boxcoxmix(y ~ cut *lot, data = strength, K = 3,  
-                         tol = 1.8,  start = "gq", lambda = 1, verbose=FALSE) 
+                           tol = 1.8,  start = "gq", lambda = 1,
+                           verbose=FALSE) 
 test.gauss
 @
 
@@ -374,7 +382,8 @@ We also fit the model shown in (\ref{eq:np1}) with an Inverse Gaussian distribut
 using $tol=0.45$ and $K=3$. 
 <<>>=
 library(npmlreg)
-inv.gauss <- alldist(y ~ cut*lot,  data = strength, k = 3,   tol = 0.45, verbose=FALSE,  family = "inverse.gaussian")
+inv.gauss <- alldist(y ~ cut*lot, data = strength, k = 3, tol = 0.45,
+                     verbose=FALSE,  family = "inverse.gaussian")
 inv.gauss
 @
 
@@ -527,8 +536,9 @@ using the \code{np.boxcoxmix()} function setting $\lambda=1$,
 data(Oxboys, package="nlme")
 Oxboys$boy <- gl(26,9)
 Oxboys$boy 
-testox <- np.boxcoxmix(height ~  age, groups = Oxboys$boy,  data = Oxboys, 
-                       K = 6, tol = 1, start = "gq", lambda=1, verbose=FALSE)
+testox <- np.boxcoxmix(height ~  age, groups = Oxboys$boy,
+                       data = Oxboys, K = 6, tol = 1, start = "gq",
+                       lambda=1, verbose=FALSE)
 @
 <<eval=FALSE>>=
 plot(testox, 1)
@@ -546,7 +556,7 @@ The  function \code{optim.boxcox()} can again  be used to perform a grid search 
 
 <<eval=FALSE>>=
 testo <- optim.boxcox(height ~ age, groups = Oxboys$boy, data = Oxboys, 
-         K = 6,  tol =1, start = "gq",  find.in.range=c( -1.2, 0.1),  s=15)
+         K = 6, tol =1, start = "gq", find.in.range = c( -1.2, 0.1), s=15)
 plot(testo, 8)
 @
 
@@ -603,6 +613,8 @@ function \code{tolfind.boxcox()} to identify optimal starting values for the mas
 Our package provides some further diagnostic tools, such as a QQ--plot and a control chart of residuals, which help validating
 the need for transformation.
 
+\sloppy
+
 In this paper we have shown how \pkg{boxcoxmix} can successfully fit models through response transformation rather than adjustment of the response distribution. 
 The examples have demonstrated that the \pkg{boxcoxmix} function \code{optim.boxcox()} works well in finding the model with maximum likelihood. All transformed 
 models using $\hat{\lambda}$ that were obtained by the \code{optim.boxcox()} function gave substantially better fits than the untransformed model, when 
@@ -615,6 +627,9 @@ but also relevant model selection criteria such as AIC should be taken into acco
 likelihoods which are reported on the original response scale, as in models (\ref{lik}) and (\ref{lik_discrete}) --- of course, this is the 
 case for the values $-2 \log L$ and $AIC$ provided in our summary  output. The experimental results verify the accuracy and the efficiency of the \pkg{boxcoxmix} package, which is 
 available from the Comprehensive \textbf{\textsf{R}} Archive Network (CRAN) at \url{https://cran.r-project.org/package=boxcoxmix}.\\
+
+\fussy
+
 \section*{Acknowledgements}
 This \textbf{\textsf{R}} package has made use of R package statmod \citep{giner2016statmod} to obtain the function \code{gqz}. 
 \bibliography{boxcoxmix}

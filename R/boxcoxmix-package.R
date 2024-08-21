@@ -13,9 +13,7 @@
 #'
 #' @name boxcoxmix-package
 #' @aliases boxcoxmix boxcoxmix-package
-#' @docType package
-#' @author Amani Almohaimeed and Jochen Einbeck
-#'
+#' @keywords package
 #' @references
 #' Box G. and Cox D. (1964). An analysis of transformations. Journal of
 #' the Royal Statistical Society. Series B (Methodological), pages 211-252.
@@ -31,31 +29,4 @@
 #' statistical computing. R Foundation for Statistical Computing,
 #' Vienna, Austria. URL https://www.R-project.org/.
 #'
-#'
-#' Maintainer: Amani Almohaimeed <amani.almohaimeed@@gmail.com>
-#' @keywords package
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-#'
-NULL
-
-
-
+"_PACKAGE"

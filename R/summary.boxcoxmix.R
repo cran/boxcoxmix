@@ -10,30 +10,30 @@
 #' @return Return invisibly the main object provided, while print a summary of its content. 
 #' @export
 print.boxcoxmix <- function(x,digits=max(3,getOption('digits')-3),na.print='', ...){
-	if (x$kind=='1'){
+	if (x$kind == '1'){
 		np <- length(x$beta)
 		m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
 		mass.points <- x$beta[m]
-		cat('\nCall: ',deparse(x$call),'\n\n')
-		cat('Coefficients')
+		cat('\nCall: ',deparse(x$call),'\n\n', fill = TRUE)
+		cat('Coefficients', fill = TRUE)
 		cat(":\n")
 		if (is.na(x$beta)[np]){np<-np-1}
 		K <- length(x$mass.point)
 		names(x$beta)<- if(K==1) names(x$beta) else x$xx
 		print.default(format(x$beta[1:np],digits = digits), print.gap = 2,quote = FALSE);cat('\n')
 		cat('MLE of sigma:\t  ',
-		    format(signif(x$sigma,digits)),'\n')
+		    format(signif(x$sigma,digits)),'\n', fill = TRUE)
 		p <- x$p
 		cat('Mixture proportions')
 		cat(":\n")
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
 		cat('-2 log L:\t   ',
 		    format(round(x$disparity,digits=1)),'and AIC = ',
-		    format(round(x$aic,digits)),"\n")
+		    format(round(x$aic,digits)),"\n", fill = TRUE)
 	}
-	if (x$kind=='2'){
+	if (x$kind == '2'){
 		cat("Minimal Disparity with EM converged:",x$MinDisparity, 
-		    "at tol=", x$Mintol, "\n")
+		    "at tol=", x$Mintol, "\n", fill = TRUE)
 		cat('MinDisparity')
 		cat(":\n")
 		print.default(format(x$MinDisparity,digits),quote=FALSE) 
@@ -50,12 +50,12 @@ print.boxcoxmix <- function(x,digits=max(3,getOption('digits')-3),na.print='', .
 		cat(":\n")
 		print.default(format(x$AllEMconverged,digits),print.gap=2,quote=FALSE) 
 	}
-	if (x$kind=='3'){
-		cat("Maximum profile log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
+	if (x$kind == '3'){
+		cat("Maximum profile log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n", fill = TRUE)
 		np <- length(x$beta)
 		m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
 		mass.points <- x$beta[m]
-		cat('\nCall: ',deparse(x$call),'\n\n')
+		cat('\nCall: ',deparse(x$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		if (is.na(x$beta)[np]){np<-np-1}
@@ -63,14 +63,14 @@ print.boxcoxmix <- function(x,digits=max(3,getOption('digits')-3),na.print='', .
 		names(x$beta)<- if(K==1) names(x$beta) else x$xx
 		print.default(format(x$beta[1:np],digits = digits), print.gap = 2,quote = FALSE);cat('\n')
 		cat('MLE of sigma:\t  ',
-		    format(signif(x$sigma,digits)),'\n')
+		    format(signif(x$sigma,digits)),'\n', fill = TRUE)
 		p <- x$p
 		cat('Mixture proportions')
 		cat(":\n")
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
 		cat('-2 log L:\t   ',
 		    format(round(x$disparity,digits=1)), 'and AIC = ',
-		    format(round(x$aic,digits)),"\n")
+		    format(round(x$aic,digits)),"\n", fill = TRUE)
 	}
 	invisible(x)
 }
@@ -78,25 +78,25 @@ print.boxcoxmix <- function(x,digits=max(3,getOption('digits')-3),na.print='', .
 #' @method print boxcoxmixpure
 #' @export
 print.boxcoxmixpure <- function(x, digits = max(3, getOption('digits') - 3), na.print = '', ...){
-	if (x$kind=='1'){
+	if (x$kind == '1'){
 		np <- length(x$mass.point)
-		cat('\nCall: ',deparse(x$call),'\n\n')
+		cat('\nCall: ',deparse(x$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		print.default(format(x$mass.point[1:np],digits = digits), print.gap = 2,quote = FALSE);cat('\n')
 		cat('MLE of sigma:\t  ',
-		    format(signif(x$sigma,digits)),'\n')
+		    format(signif(x$sigma,digits)),'\n', fill = TRUE)
 		p <- x$p
 		cat('Mixture proportions')
 		cat(":\n")
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
 		cat('-2 log L:\t   ',
 		    format(round(x$disparity,digits=1)),'and AIC = ',
-		    format(round(x$aic,digits)),"\n")
+		    format(round(x$aic,digits)),"\n", fill = TRUE)
 	}
-	if (x$kind=='2'){
+	if (x$kind == '2'){
 		cat("Minimal Disparity with EM converged:",x$MinDisparity, 
-		    "at tol=", x$Mintol, "\n")
+		    "at tol=", x$Mintol, "\n", fill = TRUE)
 		cat('MinDisparity')
 		cat(":\n")
 		print.default(format(x$MinDisparity,digits),quote=FALSE) 
@@ -113,24 +113,24 @@ print.boxcoxmixpure <- function(x, digits = max(3, getOption('digits') - 3), na.
 		cat(":\n")
 		print.default(format(x$AllEMconverged,digits),print.gap=2,quote=FALSE) 
 	}
-	if (x$kind=='3'){
-		cat("Maximum profile log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n")
+	if (x$kind == '3'){
+		cat("Maximum profile log-likelihood:", x$objective, "at lambda=", x$Maximum, "\n", fill = TRUE)
 		np <- length(x$beta)
 		m <- seq(1,np)[substr(attr(x$beta,'names'),1,4)=='MASS']
 		mass.points <- x$beta[m]
-		cat('\nCall: ',deparse(x$call),'\n\n')
+		cat('\nCall: ',deparse(x$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		print.default(format(x$beta[1:np],digits = digits), print.gap = 2,quote = FALSE);cat('\n')
 		cat('MLE of sigma:\t  ',
-		    format(signif(x$sigma,digits)),'\n')
+		    format(signif(x$sigma,digits)),'\n', fill = TRUE)
 		p <- x$p
 		cat('Mixture proportions')
 		cat(":\n")
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
 		cat('-2 log L:\t   ',
 		    format(round(x$disparity,digits=1)), 'and AIC = ',
-		    format(round(x$aic,digits)),"\n")
+		    format(round(x$aic,digits)),"\n", fill = TRUE)
 	}
 	invisible(x)
 }
@@ -143,7 +143,7 @@ print.boxcoxmixpure <- function(x, digits = max(3, getOption('digits') - 3), na.
 #' @param \dots additional arguments.
 #' @export
 summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
-	if (object$kind=='1'){
+	if (object$kind == '1'){
 		np <- length(object$beta)
 		K <- length(object$mass.point)
 		m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
@@ -154,7 +154,7 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
 		coef.table <- matrix(c(object$beta, Std.Error, tvalue), np, ncol=3, byrow = FALSE)
 		rownames(coef.table) <-if(K==1)names(object$beta) else object$xx
 		colnames(coef.table) <- c("Estimate", "Std. Error", "t value")
-		cat('\nCall: ',deparse(object$call),'\n\n')
+		cat('\nCall: ',deparse(object$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		print(coef.table)
@@ -165,14 +165,14 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
 		cat('\nMixture proportions:\n')
 		names(p) <- paste('MASS',seq(1,ncol(object$w)),sep='')
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
-		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n')
-		cat('-2 log L:\t ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)))
-		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0))
+		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n', fill = TRUE)
+		cat('-2 log L:\t ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)), fill = TRUE)
+		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0), fill = TRUE)
 		cat('\n')
 	}
-	if (object$kind=='2'){
+	if (object$kind == '2'){
 		cat("Minimal Disparity with EM converged:",object$MinDisparity, 
-		    "at tol=", object$Mintol, "\n")
+		    "at tol=", object$Mintol, "\n", fill = TRUE)
 		cat('MinDisparity')
 		cat(":\n")
 		print.default(format(object$MinDisparity,digits),quote=FALSE) 
@@ -189,8 +189,8 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
 		cat(":\n")
 		print.default(format(object$AllEMconverged,digits),print.gap=2,quote=FALSE) 
 	}
-	if (object$kind=='3'){
-		cat("Maximum profile log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
+	if (object$kind == '3'){
+		cat("Maximum profile log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n", fill = TRUE)
 		np <- length(object$beta)
 		m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
 		mass.points <- object$beta[m]
@@ -200,7 +200,7 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
 		coef.table <- matrix(c(object$beta, Std.Error, tvalue), np, ncol=3, byrow = FALSE)
 		colnames(coef.table) <- c("Estimate", "Std. Error", "t value")
 		rownames(coef.table) <- object$xx
-		cat('\nCall: ',deparse(object$call),'\n\n')
+		cat('\nCall: ',deparse(object$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		print(coef.table)
@@ -209,9 +209,9 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
 		p <- object$p
 		cat('\nMixture proportions:\n')
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
-		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n')
-		cat('-2 log L:\t   ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)))
-		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0))
+		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n', fill = TRUE)
+		cat('-2 log L:\t   ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)), fill = TRUE)
+		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0), fill = TRUE)
 		cat('\n')
 	}
 	invisible(object)
@@ -220,7 +220,7 @@ summary.boxcoxmix <- function(object,digits=max(3,getOption('digits')-3), ...){
 #' @method summary boxcoxmixpure
 #' @export
 summary.boxcoxmixpure <- function(object, digits = max(3, getOption('digits') - 3), ...){
-	if (object$kind=='1'){
+	if (object$kind == '1'){
 		k <- length(object$mass.point)
 		mass.points <- object$mass.point
 		Std.Error <-object$se
@@ -228,21 +228,21 @@ summary.boxcoxmixpure <- function(object, digits = max(3, getOption('digits') - 
 		coef.table <- matrix(c(mass.points, Std.Error, tvalue),k, ncol=3, byrow = FALSE)
 		rownames(coef.table) <-names(object$mass.point)
 		colnames(coef.table) <- c("Estimate", "Std. Error", "t value")
-		cat('\nCall: ',deparse(object$call),'\n\n')
+		cat('\nCall: ',deparse(object$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		print(coef.table)
 		p <- object$p
 		cat('\nMixture proportions:\n')
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
-		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n')
-		cat('-2 log L:\t ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)))
-		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0))
+		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n', fill = TRUE)
+		cat('-2 log L:\t ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)), fill = TRUE)
+		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0), fill = TRUE)
 		cat('\n')
 	}
-	if (object$kind=='2'){
+	if (object$kind == '2'){
 		cat("Minimal Disparity with EM converged:",object$MinDisparity, 
-		    "at tol=", object$Mintol, "\n")
+		    "at tol=", object$Mintol, "\n", fill = TRUE)
 		cat('MinDisparity')
 		cat(":\n")
 		print.default(format(object$MinDisparity,digits),quote=FALSE) 
@@ -259,8 +259,8 @@ summary.boxcoxmixpure <- function(object, digits = max(3, getOption('digits') - 
 		cat(":\n")
 		print.default(format(object$AllEMconverged,digits),print.gap=2,quote=FALSE) 
 	}
-	if (object$kind=='3'){
-		cat("Maximum profile log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n")
+	if (object$kind == '3'){
+		cat("Maximum profile log-likelihood:", object$objective, "at lambda=", object$Maximum, "\n", fill = TRUE)
 		np <- length(object$beta)
 		m <- seq(1,np)[substr(attr(object$beta,'names'),1,4)=='MASS']
 		mass.points <- object$beta[m]
@@ -270,7 +270,7 @@ summary.boxcoxmixpure <- function(object, digits = max(3, getOption('digits') - 
 		coef.table <- matrix(c(object$beta, Std.Error, tvalue), np, ncol=3, byrow = FALSE)
 		colnames(coef.table) <- c("Estimate", "Std. Error", "t value")
 		rownames(coef.table) <-names(object$beta)
-		cat('\nCall: ',deparse(object$call),'\n\n')
+		cat('\nCall: ',deparse(object$call),'\n\n', fill = TRUE)
 		cat('Coefficients')
 		cat(":\n")
 		print(coef.table)
@@ -279,9 +279,9 @@ summary.boxcoxmixpure <- function(object, digits = max(3, getOption('digits') - 
 		p <- object$p
 		cat('\nMixture proportions:\n')
 		print.default(format(p,digits),print.gap=2,quote=FALSE)
-		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n')
-		cat('-2 log L:\t   ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)))
-		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0))
+		cat('\nMLE of sigma:\t  ',format(signif(object$sigma,digits)),'\n', fill = TRUE)
+		cat('-2 log L:\t   ',format(round(object$disparity,digits=1)),  'and AIC =  ', format(round(object$aic,digits)), fill = TRUE)
+		if (!is.null(object$w)) cat('     Convergence at iteration ',round(object$EMiteration,0), fill = TRUE)
 		cat('\n')
 	}
 	invisible(object)
